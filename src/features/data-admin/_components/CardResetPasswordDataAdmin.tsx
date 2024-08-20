@@ -1,0 +1,65 @@
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Loader } from "lucide-react";
+import FormInput from "@/components/costum/FormInput";
+import useResetPasswordDataAdmin from "../_hooks/useResetPasswordDataAdmin";
+import useCsrfToken from "@/hooks/useCsrfToken";
+
+const CardResetPasswordDataAdmin = () => {
+  useCsrfToken();
+  const { form, isLoading, onSubmit } = useResetPasswordDataAdmin();
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full max-w-md space-y-8"
+      >
+        <Card className="border-2 border-primary">
+          <CardHeader>
+            <CardTitle>Reset Password Data Admin</CardTitle>
+            <CardDescription>
+              Form for reset password data admin
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FormInput
+              form={form.control}
+              name={"password"}
+              inputProps={{ placeholder: "********", type: "password" }}
+            />
+            <FormInput
+              form={form.control}
+              name={"confirmPassword"}
+              inputProps={{ placeholder: "********", type: "password" }}
+            />
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+            {!isLoading ? (
+              <Button type="submit" className="w-full">
+                Reset Password
+              </Button>
+            ) : (
+              <Button
+                className="flex w-full items-center justify-center"
+                disabled
+              >
+                <Loader className="mr-2 animate-spin" /> Loading
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
+      </form>
+    </Form>
+  );
+};
+
+export default CardResetPasswordDataAdmin;
