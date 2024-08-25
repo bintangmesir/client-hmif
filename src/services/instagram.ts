@@ -14,9 +14,6 @@ export async function getInstagram(url?: string | undefined) {
   const response = await fetch(url ? url : initialUrl, {
     method: "GET",
     signal: controller.signal,
-    headers: {
-      Accept: "application/json",
-    },
   });
   return (await response.json()) as {
     data: InstagramDataType[];
@@ -38,9 +35,6 @@ export async function getInstagramById(id: string) {
     {
       method: "GET",
       signal: controller.signal,
-      headers: {
-        Accept: "application/json",
-      },
     },
   );
   return (await response.json()) as InstagramDataType;
