@@ -5,6 +5,7 @@ import { DataPengurusCreateSchema } from "../schema";
 import { useMutation } from "react-query";
 import { postPengurus } from "@/services/pengurus";
 import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type DataPengurusCreateType = UseFormReturn<
   z.infer<typeof DataPengurusCreateSchema>
@@ -13,13 +14,21 @@ export type DataPengurusCreateType = UseFormReturn<
 const useCreateDataPengurus = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: postPengurusMutation,
-  } = useMutation({
+  const { setFlashMessage } = useFlashMessageContext();
+  const { isLoading, mutateAsync: postPengurusMutation } = useMutation({
     mutationKey: ["postPengurus"],
     mutationFn: (formData: FormData) => postPengurus(formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-pengurus" });
+      }
+    },
   });
   const form: DataPengurusCreateType = useForm<
     z.infer<typeof DataPengurusCreateSchema>
@@ -29,7 +38,6 @@ const useCreateDataPengurus = () => {
       name: "",
       departemen: "departemen_kominfo",
       jabatan: "staff_departemen",
-      foto: null,
     },
   });
   const onSubmit = async (values: z.infer<typeof DataPengurusCreateSchema>) => {
@@ -47,12 +55,6 @@ const useCreateDataPengurus = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-pengurus" });
   };
   return { form, isLoading, onSubmit };
 };

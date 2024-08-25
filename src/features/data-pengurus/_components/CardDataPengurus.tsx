@@ -1,6 +1,5 @@
-import { deletePengurus, getPengurus } from "@/services/pengurus";
+import { deletePengurus } from "@/services/pengurus";
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "react-query";
 import { DataPengurusType } from "../schema";
 import {
   DataTable,
@@ -27,6 +26,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
 import { stringTransformToWhiteSpace } from "@/utils/stringTransformToWhiteSpace";
+import useGetDataPengurus from "../_hooks/useGetDataPengurus";
+import { AdminRoleEnum, useAuthUserContext } from "@/context/auth-provider";
 
 export const SkeletonTablePengurus = () => {
   return (
@@ -62,10 +63,9 @@ export const SkeletonTablePengurus = () => {
 };
 
 export const CardDataPengurus = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["dataPengurus"],
-    queryFn: getPengurus,
-  });
+  const admin = useAuthUserContext();
+  const role = admin?.data.role;
+  const { data, firstIsLoading, firstIsError } = useGetDataPengurus();
 
   const columns: ColumnDef<DataPengurusType>[] = [
     {
@@ -103,25 +103,23 @@ export const CardDataPengurus = () => {
         const id = row.getValue("id");
         const name = row.getValue("name");
 
-        return (
+        return role === AdminRoleEnum.staff_kominfo ? (
           <ActionButton
             id={id as string}
             rowDataWarning={name as string}
             deleteData={() => deletePengurus(id as string)}
           />
-        );
+        ) : null;
       },
     },
   ];
 
-  if (isError) {
+  if (firstIsError) {
     return (
       <Card className="w-full border-2 border-primary">
-        <CardHeader className="flex w-full flex-row items-center justify-between gap-2">
-          <div className="flex flex-col gap-2">
-            <CardTitle>Data Pengurus</CardTitle>
-            <CardDescription>Table for show data pengurus</CardDescription>
-          </div>
+        <CardHeader>
+          <CardTitle>Data Pengurus</CardTitle>
+          <CardDescription>Table for show data pengurus</CardDescription>
           <Link to={"/data-pengurus/create"}>
             <Button>
               <Plus className="mr-1" /> Tambah Data
@@ -140,17 +138,19 @@ export const CardDataPengurus = () => {
           <CardTitle>Data Pengurus</CardTitle>
           <CardDescription>Table for show data pengurus</CardDescription>
         </div>
-        <Link to={"/data-pengurus/create"}>
-          <Button>
-            <Plus className="mr-1" /> Tambah Data
-          </Button>
-        </Link>
+        {role === AdminRoleEnum.staff_kominfo ? (
+          <Link to={"/data-pengurus/create"}>
+            <Button>
+              <Plus className="mr-1" /> Tambah Data
+            </Button>
+          </Link>
+        ) : null}
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {firstIsLoading ? (
           <SkeletonTablePengurus />
         ) : (
-          <DataTable columns={columns} data={data ? data.data : []} />
+          <DataTable columns={columns} data={data ? data : []} />
         )}
       </CardContent>
     </Card>

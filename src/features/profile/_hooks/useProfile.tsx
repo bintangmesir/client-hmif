@@ -4,34 +4,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema } from "../schema";
 import { useEffect, useState } from "react";
 import { useAuthUserContext } from "@/context/auth-provider";
-import { splitStringToArray } from "@/utils/stringToArray";
 import { useMutation } from "react-query";
 import { patchProfile } from "@/services/profile";
-import { useNavigate } from "@tanstack/react-router";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type ProfileType = UseFormReturn<z.infer<typeof ProfileSchema>>;
 
 const useProfile = () => {
-  const navigate = useNavigate({ from: "/profile" });
   const user = useAuthUserContext();
   const [id, setId] = useState("");
-  const [fotoProfile, setFotoProfile] = useState<string[]>();
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchProfileMutation,
-  } = useMutation({
+  const { setFlashMessage } = useFlashMessageContext();
+  const { isLoading, mutateAsync: patchProfileMutation } = useMutation({
     mutationKey: ["profile"],
-    mutationFn: patchProfile,
+    mutationFn: (formData: FormData) => patchProfile(formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        setFlashMessage({
+          title: "SUCCESS",
+          description: item.message,
+          status: item.status,
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    },
   });
 
   useEffect(() => {
     if (user !== undefined) {
       setId(user.data.id);
-      const formatted = user.data.fotoProfile
-        ? splitStringToArray(user.data.fotoProfile)
-        : [];
-      setFotoProfile(formatted);
     }
   }, [user]);
 
@@ -46,7 +52,7 @@ const useProfile = () => {
       ? {
           name: user.data.name,
           email: user.data.email,
-          fotoProfile: null,
+          fotoProfile: user.data.fotoProfile as unknown as FileList,
         }
       : undefined,
   });
@@ -66,15 +72,9 @@ const useProfile = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: "/profile" });
-    }
-
-    navigate({ to: "/profile" });
   };
 
-  return { form, isLoading, onSubmit, fotoProfile, id };
+  return { form, isLoading, onSubmit, id };
 };
 
 export default useProfile;

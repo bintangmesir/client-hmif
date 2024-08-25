@@ -28,9 +28,9 @@ export const DataBukuCreateSchema = z.object({
     .string()
     .min(1, { message: "Penulis harus diisi." })
     .max(100, { message: "Penulis tidak boleh melebihi 100 karakter." }),
-  tahunTerbit: z
-    .string()
-    .length(4, { message: "Tahun terbit harus terdiri dari 4 digit." }),
+  tahunTerbit: z.coerce.number().int().nonnegative({
+    message: "Tahun terbit harus berupa angka positif atau nol.",
+  }),
   penerbit: z
     .string()
     .min(1, { message: "Penerbit harus diisi." })
@@ -41,32 +41,23 @@ export const DataBukuCreateSchema = z.object({
     .int()
     .nonnegative({ message: "Jumlah harus berupa angka positif atau nol." }),
   cover: z
-    .custom<FileList>()
-    .nullable()
-    .refine((files) => !files || files.length > 0, {
-      message: "Photo upload is required",
+    .instanceof(FileList, {
+      message: "Cover harus berupa file.",
     })
-    .refine((files) => !files || files.length <= 1, {
-      message: "A maximum of 1 photos can be uploaded",
+    .refine((files) => files.length <= 1, {
+      message: "A maximum of 1 photo can be uploaded",
     })
     .refine(
       (files) =>
-        !files ||
-        (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-          Array.from(files).every((file) =>
+        Array.from(files).every(
+          (file) =>
+            file.size <= MAX_FILE_SIZE &&
             ACCEPTED_IMAGE_TYPES.includes(file.type),
-          )),
-      {
-        message: "Maximum file size is 1MB.",
-      },
-    )
-    .refine(
-      (files) =>
-        !files ||
-        Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type),
         ),
-      "Only .jpg, .jpeg, and .png files are allowed",
+      {
+        message:
+          "File size must be less than 1MB and file type must be jpg, jpeg, or png.",
+      },
     ),
 });
 
@@ -83,9 +74,9 @@ export const DataBukuUpdateSchema = z.object({
     .string()
     .min(1, { message: "Penulis harus diisi." })
     .max(100, { message: "Penulis tidak boleh melebihi 100 karakter." }),
-  tahunTerbit: z
-    .string()
-    .length(4, { message: "Tahun terbit harus terdiri dari 4 digit." }),
+  tahunTerbit: z.coerce.number().int().nonnegative({
+    message: "Tahun terbit harus berupa angka positif atau nol.",
+  }),
   penerbit: z
     .string()
     .min(1, { message: "Penerbit harus diisi." })
@@ -96,31 +87,44 @@ export const DataBukuUpdateSchema = z.object({
     .int()
     .nonnegative({ message: "Jumlah harus berupa angka positif atau nol." }),
   cover: z
-    .custom<FileList>()
-    .nullable()
-    .refine((files) => !files || files.length > 0, {
-      message: "Photo upload is required",
-    })
-    .refine((files) => !files || files.length <= 1, {
-      message: "A maximum of 1 photos can be uploaded",
-    })
+    .union([
+      z.string().nullable(), // Allow string type for thumbnail
+      z.instanceof(FileList, { message: "Cover harus berupa file." }),
+    ])
     .refine(
-      (files) =>
-        !files ||
-        (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-          Array.from(files).every((file) =>
-            ACCEPTED_IMAGE_TYPES.includes(file.type),
-          )),
+      (value) => {
+        if (typeof value === "string") {
+          // If thumbnail is a string, skip validation
+          return true;
+        }
+        if (value instanceof FileList) {
+          // If thumbnail is a FileList, perform validation
+          return value.length <= 1;
+        }
+        return false;
+      },
       {
-        message: "Maximum file size is 1MB.",
+        message:
+          "Photo upload is required and a maximum of 1 photo can be uploaded.",
       },
     )
     .refine(
-      (files) =>
-        !files ||
-        Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type),
-        ),
-      "Only .jpg, .jpeg, and .png files are allowed",
+      (value) => {
+        if (typeof value === "string") {
+          return true;
+        }
+        if (value instanceof FileList) {
+          return Array.from(value).every(
+            (file) =>
+              file.size <= MAX_FILE_SIZE &&
+              ACCEPTED_IMAGE_TYPES.includes(file.type),
+          );
+        }
+        return false;
+      },
+      {
+        message:
+          "Maximum file size is 1MB and only .jpg, .jpeg, and .png files are allowed.",
+      },
     ),
 });

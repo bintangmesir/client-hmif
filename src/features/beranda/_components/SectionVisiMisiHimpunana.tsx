@@ -1,4 +1,5 @@
 import { TypographyList } from "@/components/costum/Typhography";
+import RetroGrid from "@/components/magicui/retro-grid";
 import {
   Card,
   CardContent,
@@ -12,8 +13,8 @@ const SectionVisiMisiHimpunana = () => {
   const visiMisi = data;
 
   return (
-    <section className="container grid w-full grid-cols-1 items-start justify-center gap-4 md:grid-cols-2">
-      <div className="flex w-full items-center justify-center">
+    <section className="relative grid w-full grid-cols-1 items-start justify-center gap-4 md:grid-cols-2">
+      <div className="container flex w-full items-center justify-center">
         <Card className="max-w-md border-2 border-primary">
           <CardHeader>
             <CardTitle className="text-center">Visi</CardTitle>
@@ -26,7 +27,7 @@ const SectionVisiMisiHimpunana = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="flex w-full items-center justify-center">
+      <div className="container flex w-full items-center justify-center">
         <Card className="max-w-md border-2 border-primary">
           <CardHeader>
             <CardTitle className="text-center">Misi</CardTitle>
@@ -39,6 +40,7 @@ const SectionVisiMisiHimpunana = () => {
           </CardContent>
         </Card>
       </div>
+      <RetroGrid />
     </section>
   );
 };

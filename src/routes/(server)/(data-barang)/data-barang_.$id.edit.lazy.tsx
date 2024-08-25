@@ -1,19 +1,13 @@
-import CardUpdateDataBarang from "@/features/data-barang/_components/CardUpdateDataBarang";
 import AdminLayout from "@/layouts/AdminLayout";
+import UpdateDataBarang from "@/features/data-barang/_pages/UpdateDataBarang";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute(
   "/(server)/(data-barang)/data-barang/$id/edit",
 )({
-  component: () => UpdateDataBarang(),
-});
-
-function UpdateDataBarang() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardUpdateDataBarang />
-      </div>
+      <UpdateDataBarang />
     </AdminLayout>
-  );
-}
+  ),
+});

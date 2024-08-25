@@ -34,32 +34,23 @@ export const DataAdminCreateSchema = z
       .max(255, "Kata sandi tidak boleh lebih dari 255 karakter"),
     confirmPassword: z.string(),
     fotoProfile: z
-      .custom<FileList>()
-      .nullable()
-      .refine((files) => !files || files.length > 0, {
-        message: "Unggahan foto diperlukan",
+      .instanceof(FileList, {
+        message: "Foto profile harus berupa file.",
       })
-      .refine((files) => !files || files.length <= 1, {
-        message: "Maksimal hanya 1 foto yang dapat diunggah",
+      .refine((files) => files.length <= 1, {
+        message: "A maximum of 1 photo can be uploaded",
       })
       .refine(
         (files) =>
-          !files ||
-          (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-            Array.from(files).every((file) =>
+          Array.from(files).every(
+            (file) =>
+              file.size <= MAX_FILE_SIZE &&
               ACCEPTED_IMAGE_TYPES.includes(file.type),
-            )),
-        {
-          message: "Ukuran file maksimum adalah 1MB.",
-        },
-      )
-      .refine(
-        (files) =>
-          !files ||
-          Array.from(files).every((file) =>
-            ACCEPTED_IMAGE_TYPES.includes(file.type),
           ),
-        "Hanya file .jpg, .jpeg, dan .png yang diizinkan",
+        {
+          message:
+            "File size must be less than 1MB and file type must be jpg, jpeg, or png.",
+        },
       ),
     role: z.enum(
       [
@@ -98,32 +89,45 @@ export const DataAdminUpdateSchema = z.object({
     .min(1, "Email harus diisi")
     .max(100, "Email tidak boleh lebih dari 100 karakter"),
   fotoProfile: z
-    .custom<FileList>()
-    .nullable()
-    .refine((files) => !files || files.length > 0, {
-      message: "Unggahan foto diperlukan",
-    })
-    .refine((files) => !files || files.length <= 1, {
-      message: "Maksimal hanya 1 foto yang dapat diunggah",
-    })
+    .union([
+      z.string().nullable(), // Allow string type for thumbnail
+      z.instanceof(FileList, { message: "Foto profile harus berupa file." }),
+    ])
     .refine(
-      (files) =>
-        !files ||
-        (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-          Array.from(files).every((file) =>
-            ACCEPTED_IMAGE_TYPES.includes(file.type),
-          )),
+      (value) => {
+        if (typeof value === "string") {
+          // If thumbnail is a string, skip validation
+          return true;
+        }
+        if (value instanceof FileList) {
+          // If thumbnail is a FileList, perform validation
+          return value.length <= 1;
+        }
+        return false;
+      },
       {
-        message: "Ukuran file maksimum adalah 1MB.",
+        message:
+          "Photo upload is required and a maximum of 1 photo can be uploaded.",
       },
     )
     .refine(
-      (files) =>
-        !files ||
-        Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type),
-        ),
-      "Hanya file .jpg, .jpeg, dan .png yang diizinkan",
+      (value) => {
+        if (typeof value === "string") {
+          return true;
+        }
+        if (value instanceof FileList) {
+          return Array.from(value).every(
+            (file) =>
+              file.size <= MAX_FILE_SIZE &&
+              ACCEPTED_IMAGE_TYPES.includes(file.type),
+          );
+        }
+        return false;
+      },
+      {
+        message:
+          "Maximum file size is 1MB and only .jpg, .jpeg, and .png files are allowed.",
+      },
     ),
 });
 

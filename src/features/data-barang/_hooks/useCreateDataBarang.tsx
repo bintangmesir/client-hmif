@@ -5,6 +5,7 @@ import { DataBarangSchema } from "../schema";
 import { useMutation } from "react-query";
 import { postBarang } from "@/services/barang";
 import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type CreateDataBarangType = UseFormReturn<
   z.infer<typeof DataBarangSchema>
@@ -13,13 +14,21 @@ export type CreateDataBarangType = UseFormReturn<
 const useCreateDataBarang = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: postBarangMutation,
-  } = useMutation({
+  const { setFlashMessage } = useFlashMessageContext();
+  const { isLoading, mutateAsync: postBarangMutation } = useMutation({
     mutationKey: ["postBarang"],
     mutationFn: (formData: FormData) => postBarang(formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-barang" });
+      }
+    },
   });
   const form: CreateDataBarangType = useForm<z.infer<typeof DataBarangSchema>>({
     resolver: zodResolver(DataBarangSchema),
@@ -46,12 +55,6 @@ const useCreateDataBarang = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-barang" });
   };
   return { form, isLoading, onSubmit };
 };

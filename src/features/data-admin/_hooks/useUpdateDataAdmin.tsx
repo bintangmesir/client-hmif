@@ -2,11 +2,10 @@ import { z } from "zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DataAdminUpdateSchema } from "../schema";
-import { useEffect, useState } from "react";
-import { splitStringToArray } from "@/utils/stringToArray";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "react-query";
 import { getAdminById, patchAdmin } from "@/services/admin";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type DataAdminUpdateType = UseFormReturn<
   z.infer<typeof DataAdminUpdateSchema>
@@ -15,29 +14,27 @@ export type DataAdminUpdateType = UseFormReturn<
 const useUpdateDataAdmin = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
+  const { setFlashMessage } = useFlashMessageContext();
   const { id }: { id: string } = useParams({ strict: false });
   const { data } = useQuery({
     queryKey: ["dataAdminById", { id: id }],
     queryFn: async () => getAdminById(id),
   });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchAdminMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: patchAdminMutation } = useMutation({
     mutationKey: ["patchAdmin"],
     mutationFn: (formData: FormData) => patchAdmin(id, formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-admin" });
+      }
+    },
   });
-  const [fotoProfile, setFotoProfile] = useState<string[]>();
-
-  useEffect(() => {
-    if (data) {
-      const formatted = data.data.fotoProfile
-        ? splitStringToArray(data.data.fotoProfile)
-        : [];
-      setFotoProfile(formatted);
-    }
-  }, [data]);
 
   const form: DataAdminUpdateType = useForm<
     z.infer<typeof DataAdminUpdateSchema>
@@ -52,7 +49,7 @@ const useUpdateDataAdmin = () => {
       ? {
           name: data.data.name,
           email: data.data.email,
-          fotoProfile: null,
+          fotoProfile: data.data.fotoProfile as unknown as FileList,
         }
       : undefined,
   });
@@ -72,14 +69,8 @@ const useUpdateDataAdmin = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-admin" });
   };
-  return { form, isLoading, onSubmit, fotoProfile, id };
+  return { form, isLoading, onSubmit, id };
 };
 
 export default useUpdateDataAdmin;

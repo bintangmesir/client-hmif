@@ -11,6 +11,7 @@ import { stringTransformToWhiteSpace } from "@/utils/stringTransformToWhiteSpace
 import { Input, InputProps } from "../ui/input";
 import { useState } from "react";
 import CaraouselImgPreview from "./CarouselImgPreview";
+import { splitStringToArray } from "@/utils/stringToArray";
 
 type FormFileProps<T extends FieldValues> = {
   form: Control<T>;
@@ -27,7 +28,6 @@ const FormFile = <T extends FieldValues>({
   name,
   description,
   imgPath,
-  imgDatas = [],
   showPreviewImage = true,
   inputProps,
 }: FormFileProps<T>) => {
@@ -72,10 +72,13 @@ const FormFile = <T extends FieldValues>({
                   <div className="container">
                     <CaraouselImgPreview props={{ data: imgDataUploaded }} />
                   </div>
-                ) : imgDatas && imgDatas.length ? (
+                ) : imgPath && field.value ? (
                   <div className="container">
                     <CaraouselImgPreview
-                      props={{ path: imgPath, data: imgDatas }}
+                      props={{
+                        path: imgPath,
+                        data: splitStringToArray(field.value),
+                      }}
                     />
                   </div>
                 ) : null}

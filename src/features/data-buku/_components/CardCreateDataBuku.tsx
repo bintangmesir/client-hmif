@@ -54,12 +54,12 @@ const CardCreateDataBuku = () => {
             <FormInput
               form={form.control}
               name={"tahunTerbit"}
-              inputProps={{ placeholder: "1999", type: "text" }}
+              inputProps={{ placeholder: "1999", type: "number" }}
             />
             <FormInput
               form={form.control}
               name={"jumlah"}
-              inputProps={{ placeholder: "Jumlah buku", type: "text" }}
+              inputProps={{ placeholder: "Jumlah buku", type: "number" }}
             />
             <FormTextarea
               form={form.control}

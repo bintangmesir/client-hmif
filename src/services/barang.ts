@@ -3,20 +3,28 @@ import { DataBarangType } from "@/features/data-barang/schema";
 import { PostOrPatchResponseType } from "@/utils/type";
 import { getCookie } from "react-use-cookie";
 
-export async function getBarang() {
+export async function getBarang(offset: number) {
   const accessToken = getCookie("accessToken");
   const controller = new AbortController();
 
-  const response = await fetch(`${VITE_APP_URI_SERVER}/v1/barang`, {
-    method: "GET",
-    signal: controller.signal,
-    mode: "cors",
-    credentials: "include",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const response = await fetch(
+    `${VITE_APP_URI_SERVER}/v1/barang?offset=${offset}`,
+    {
+      method: "GET",
+      signal: controller.signal,
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     },
-  });
-  return (await response.json()) as { data: DataBarangType[] };
+  );
+  return (await response.json()) as {
+    data: DataBarangType[];
+    count: number;
+    offset: number;
+    limit: number;
+  };
 }
 
 export async function getBarangById(id: string) {

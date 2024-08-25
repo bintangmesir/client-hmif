@@ -1,19 +1,13 @@
-import CardCreateDataBuku from "@/features/data-buku/_components/CardCreateDataBuku";
 import AdminLayout from "@/layouts/AdminLayout";
+import CreateDataBuku from "@/features/data-buku/_pages/CreateDataBuku";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute(
   "/(server)/(data-buku)/data-buku/create",
 )({
-  component: () => CreateDataBuku(),
-});
-
-function CreateDataBuku() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardCreateDataBuku />
-      </div>
+      <CreateDataBuku />
     </AdminLayout>
-  );
-}
+  ),
+});

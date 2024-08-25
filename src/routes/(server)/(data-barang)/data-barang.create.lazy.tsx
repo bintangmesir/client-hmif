@@ -1,19 +1,13 @@
-import CardCreateDataBarang from "@/features/data-barang/_components/CardCreateDataBarang";
 import AdminLayout from "@/layouts/AdminLayout";
+import CreateDataBarang from "@/features/data-barang/_pages/CreateDataBarang";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute(
   "/(server)/(data-barang)/data-barang/create",
 )({
-  component: () => CreateDataBarang(),
-});
-
-function CreateDataBarang() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardCreateDataBarang />
-      </div>
+      <CreateDataBarang />
     </AdminLayout>
-  );
-}
+  ),
+});

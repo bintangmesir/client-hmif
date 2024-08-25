@@ -3,16 +3,24 @@ import { DataBukuType } from "@/features/data-buku/schema";
 import { PostOrPatchResponseType } from "@/utils/type";
 import { getCookie } from "react-use-cookie";
 
-export async function getBuku() {
+export async function getBuku(offset: number, limit?: number | undefined) {
   const controller = new AbortController();
 
-  const response = await fetch(`${VITE_APP_URI_SERVER}/v1/buku`, {
-    method: "GET",
-    signal: controller.signal,
-    mode: "cors",
-    credentials: "include",
-  });
-  return (await response.json()) as { data: DataBukuType[] };
+  const response = await fetch(
+    `${VITE_APP_URI_SERVER}/v1/buku?offset=${offset}${limit ? `&limit=${limit}` : ""}`,
+    {
+      method: "GET",
+      signal: controller.signal,
+      mode: "cors",
+      credentials: "include",
+    },
+  );
+  return (await response.json()) as {
+    data: DataBukuType[];
+    count: number;
+    offset: number;
+    limit: number;
+  };
 }
 
 export async function getBukuById(id: string) {

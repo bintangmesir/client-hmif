@@ -10,10 +10,10 @@ export type DataAlumniType = {
 };
 
 export const DataAlumniSchema = z.object({
-  angkatan: z
-    .string()
-    .min(1, "Angkatan tidak boleh kosong.")
-    .max(4, "Angkatan harus memiliki maksimal 4 karakter."),
+  angkatan: z.coerce
+    .number()
+    .int()
+    .nonnegative({ message: "Angkatan harus berupa angka positif atau nol." }),
   nama: z
     .string()
     .min(1, "Nama tidak boleh kosong.")

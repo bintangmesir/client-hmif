@@ -16,7 +16,7 @@ import useCsrfToken from "@/hooks/useCsrfToken";
 
 const CardProfile = () => {
   useCsrfToken();
-  const { form, isLoading, onSubmit, fotoProfile, id } = useProfile();
+  const { form, isLoading, onSubmit, id } = useProfile();
 
   return (
     <Form {...form}>
@@ -43,7 +43,6 @@ const CardProfile = () => {
             <FormFile
               form={form.control}
               name={"fotoProfile"}
-              imgDatas={fotoProfile}
               imgPath={`${import.meta.env.VITE_APP_FILE_SERVER}/admin/${id}`}
             />
           </CardContent>

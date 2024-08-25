@@ -1,19 +1,13 @@
-import CardCreateDataPengurus from "@/features/data-pengurus/_components/CardCreateDataPengurus";
+import CreateDataPengurus from "@/features/data-pengurus/_pages/CreateDataPengurus";
 import AdminLayout from "@/layouts/AdminLayout";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute(
   "/(server)/(data-pengurus)/data-pengurus/create",
 )({
-  component: () => CreateDataPengurus(),
-});
-
-function CreateDataPengurus() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardCreateDataPengurus />
-      </div>
+      <CreateDataPengurus />
     </AdminLayout>
-  );
-}
+  ),
+});

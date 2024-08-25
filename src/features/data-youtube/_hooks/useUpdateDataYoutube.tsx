@@ -5,6 +5,7 @@ import { DataYoutubeSchema } from "../schema";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "react-query";
 import { getYoutubeById, patchYoutube } from "@/services/youtube";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type UpdateDataYoutubeType = UseFormReturn<
   z.infer<typeof DataYoutubeSchema>
@@ -13,18 +14,26 @@ export type UpdateDataYoutubeType = UseFormReturn<
 const useUpdateDataYoutube = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
+  const { setFlashMessage } = useFlashMessageContext();
   const { id }: { id: string } = useParams({ strict: false });
   const { data } = useQuery({
     queryKey: ["dataYoutubeById", { id: id }],
     queryFn: async () => getYoutubeById(id),
   });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchYoutubeMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: patchYoutubeMutation } = useMutation({
     mutationKey: ["patchYoutube"],
     mutationFn: (formData: FormData) => patchYoutube(id, formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-youtube" });
+      }
+    },
   });
 
   const form: UpdateDataYoutubeType = useForm<
@@ -53,12 +62,6 @@ const useUpdateDataYoutube = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-youtube" });
   };
   return { form, isLoading, onSubmit, id };
 };

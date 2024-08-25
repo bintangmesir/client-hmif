@@ -1,12 +1,19 @@
 import { TypographyH1 } from "@/components/costum/Typhography";
-import { AdminRoleEnum } from "@/hooks/useCheckRole";
 import { getAccessToken, getActiveUser } from "@/services/auth";
 import { AccessTokenType } from "@/utils/type";
-import { Navigate } from "@tanstack/react-router";
+import { Navigate, useLocation, useNavigate } from "@tanstack/react-router";
 import { jwtDecode } from "jwt-decode";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { useQuery } from "react-query";
 import { getCookie } from "react-use-cookie";
+
+export enum AdminRoleEnum {
+  super_admin = "super_admin",
+  kadep_kominfo = "kadep_kominfo",
+  staff_kominfo = "staff_kominfo",
+  kadep_prhp = "kadep_prhp",
+  staff_prhp = "staff_prhp",
+}
 
 export type AdminType = {
   id: string;
@@ -25,30 +32,60 @@ export type DataAdminActive =
   | undefined;
 
 export const AuthUserContext = createContext<DataAdminActive>(undefined);
+export const CheckRoleContext = createContext<{
+  checkRole: (roleAllowed: AdminRoleEnum[]) => Promise<void> | undefined;
+  isAllowed: boolean;
+}>({ checkRole: () => undefined, isAllowed: false });
 
 export function useAuthUserContext() {
   return useContext(AuthUserContext);
 }
 
+export function useCheckRole() {
+  return useContext(CheckRoleContext);
+}
+
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
+  const navigate = useNavigate({ from: location.pathname });
   const accessToken = getCookie("accessToken");
+  const [isAllowed, setIsAllowed] = useState(false);
   useQuery({
     queryKey: ["accessToken"],
-    queryFn: () => getAccessToken(),
-    enabled: accessToken === "",
+    queryFn: async () => getAccessToken(),
+    refetchInterval: 3500000,
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        return navigate({ to: "/" });
+      }
+    },
   });
 
   const {
-    data: dataUser,
+    data: authData,
     isError,
     isLoading,
   } = useQuery({
-    queryKey: ["dataUser"],
-    queryFn: () => {
+    queryKey: ["authData"],
+    queryFn: async () => {
       const decoded = jwtDecode<AccessTokenType>(accessToken);
       return getActiveUser(decoded.id);
     },
+    enabled: accessToken !== "",
   });
+
+  const checkRole = (roleAllowed: AdminRoleEnum[]) => {
+    setIsAllowed(false);
+    if (roleAllowed.length && authData) {
+      const isValid = roleAllowed.includes(authData.data.role);
+      if (!isValid) {
+        return navigate({ to: "/dashboard" });
+      } else {
+        setIsAllowed(true);
+      }
+    }
+    setIsAllowed(true);
+  };
 
   if (isError) {
     return <Navigate to="/" />;
@@ -63,8 +100,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthUserContext.Provider value={dataUser}>
-      {children}
+    <AuthUserContext.Provider value={authData}>
+      <CheckRoleContext.Provider value={{ checkRole, isAllowed }}>
+        {authData && children}
+      </CheckRoleContext.Provider>
     </AuthUserContext.Provider>
   );
 };

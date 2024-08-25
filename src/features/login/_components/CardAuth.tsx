@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import useFormLogin from "../_hooks/useLogin";
 import FormInput from "@/components/costum/FormInput";
 import useCsrfToken from "@/hooks/useCsrfToken";
-import { Link } from "@tanstack/react-router";
 
 const CardAuth = () => {
   useCsrfToken();
@@ -41,9 +40,6 @@ const CardAuth = () => {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Link to={"/"}>
-              <Button variant={"link"}>Don't have account?</Button>
-            </Link>
             {!isLoading ? (
               <Button type="submit" className="w-full">
                 Login

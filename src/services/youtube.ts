@@ -3,16 +3,24 @@ import { DataYoutubeType } from "@/features/data-youtube/schema";
 import { PostOrPatchResponseType } from "@/utils/type";
 import { getCookie } from "react-use-cookie";
 
-export async function getYoutube() {
+export async function getYoutube(offset: number, limit?: number | undefined) {
   const controller = new AbortController();
 
-  const response = await fetch(`${VITE_APP_URI_SERVER}/v1/youtube`, {
-    method: "GET",
-    signal: controller.signal,
-    mode: "cors",
-    credentials: "include",
-  });
-  return (await response.json()) as { data: DataYoutubeType[] };
+  const response = await fetch(
+    `${VITE_APP_URI_SERVER}/v1/youtube?offset=${offset}${limit ? `&limit=${limit}` : ""}`,
+    {
+      method: "GET",
+      signal: controller.signal,
+      mode: "cors",
+      credentials: "include",
+    },
+  );
+  return (await response.json()) as {
+    data: DataYoutubeType[];
+    count: number;
+    offset: number;
+    limit: number;
+  };
 }
 
 export async function getYoutubeById(id: string) {

@@ -22,14 +22,17 @@ const serverDashboardLazyImport = createFileRoute('/(server)/dashboard')()
 const clientInformationallLazyImport = createFileRoute(
   '/(client)/informationall',
 )()
-const clientArtikelLazyImport = createFileRoute('/(client)/artikel')()
-const clientAboutLazyImport = createFileRoute('/(client)/about')()
 const authLoginLazyImport = createFileRoute('/(auth)/login')()
+const clientBukuIndexLazyImport = createFileRoute('/(client)/buku/')()
+const clientArtikelIndexLazyImport = createFileRoute('/(client)/artikel/')()
 const serverdataYoutubeDataYoutubeIndexLazyImport = createFileRoute(
   '/(server)/(data-youtube)/data-youtube/',
 )()
 const serverdataPengurusDataPengurusIndexLazyImport = createFileRoute(
   '/(server)/(data-pengurus)/data-pengurus/',
+)()
+const serverdataHimpunanDataHimpunanIndexLazyImport = createFileRoute(
+  '/(server)/(data-himpunan)/data-himpunan/',
 )()
 const serverdataBukuDataBukuIndexLazyImport = createFileRoute(
   '/(server)/(data-buku)/data-buku/',
@@ -66,6 +69,13 @@ const serverdataAlumniDataAlumniCreateLazyImport = createFileRoute(
 )()
 const serverdataAdminDataAdminCreateLazyImport = createFileRoute(
   '/(server)/(data-admin)/data-admin/create',
+)()
+const clientBukuIdBukuLazyImport = createFileRoute('/(client)/buku/$id/buku')()
+const clientArtikelIdInstagramLazyImport = createFileRoute(
+  '/(client)/artikel/$id/instagram',
+)()
+const clientArtikelIdArtikelLazyImport = createFileRoute(
+  '/(client)/artikel/$id/artikel',
 )()
 const serverdataYoutubeDataYoutubeIdEditLazyImport = createFileRoute(
   '/(server)/(data-youtube)/data-youtube/$id/edit',
@@ -121,26 +131,28 @@ const clientInformationallLazyRoute = clientInformationallLazyImport
     import('./routes/(client)/informationall.lazy').then((d) => d.Route),
   )
 
-const clientArtikelLazyRoute = clientArtikelLazyImport
-  .update({
-    path: '/artikel',
-    getParentRoute: () => rootRoute,
-  } as any)
-  .lazy(() => import('./routes/(client)/artikel.lazy').then((d) => d.Route))
-
-const clientAboutLazyRoute = clientAboutLazyImport
-  .update({
-    path: '/about',
-    getParentRoute: () => rootRoute,
-  } as any)
-  .lazy(() => import('./routes/(client)/about.lazy').then((d) => d.Route))
-
 const authLoginLazyRoute = authLoginLazyImport
   .update({
     path: '/login',
     getParentRoute: () => rootRoute,
   } as any)
   .lazy(() => import('./routes/(auth)/login.lazy').then((d) => d.Route))
+
+const clientBukuIndexLazyRoute = clientBukuIndexLazyImport
+  .update({
+    path: '/buku/',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() => import('./routes/(client)/buku.index.lazy').then((d) => d.Route))
+
+const clientArtikelIndexLazyRoute = clientArtikelIndexLazyImport
+  .update({
+    path: '/artikel/',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(client)/artikel.index.lazy').then((d) => d.Route),
+  )
 
 const serverdataYoutubeDataYoutubeIndexLazyRoute =
   serverdataYoutubeDataYoutubeIndexLazyImport
@@ -162,6 +174,18 @@ const serverdataPengurusDataPengurusIndexLazyRoute =
     } as any)
     .lazy(() =>
       import('./routes/(server)/(data-pengurus)/data-pengurus.index.lazy').then(
+        (d) => d.Route,
+      ),
+    )
+
+const serverdataHimpunanDataHimpunanIndexLazyRoute =
+  serverdataHimpunanDataHimpunanIndexLazyImport
+    .update({
+      path: '/data-himpunan/',
+      getParentRoute: () => rootRoute,
+    } as any)
+    .lazy(() =>
+      import('./routes/(server)/(data-himpunan)/data-himpunan.index.lazy').then(
         (d) => d.Route,
       ),
     )
@@ -310,6 +334,35 @@ const serverdataAdminDataAdminCreateLazyRoute =
       ),
     )
 
+const clientBukuIdBukuLazyRoute = clientBukuIdBukuLazyImport
+  .update({
+    path: '/buku/$id/buku',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(client)/buku_.$id.buku.lazy').then((d) => d.Route),
+  )
+
+const clientArtikelIdInstagramLazyRoute = clientArtikelIdInstagramLazyImport
+  .update({
+    path: '/artikel/$id/instagram',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(client)/artikel_.$id.instagram.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const clientArtikelIdArtikelLazyRoute = clientArtikelIdArtikelLazyImport
+  .update({
+    path: '/artikel/$id/artikel',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(client)/artikel_.$id.artikel.lazy').then((d) => d.Route),
+  )
+
 const serverdataYoutubeDataYoutubeIdEditLazyRoute =
   serverdataYoutubeDataYoutubeIdEditLazyImport
     .update({
@@ -405,20 +458,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginLazyImport
       parentRoute: typeof rootRoute
     }
-    '/(client)/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof clientAboutLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/(client)/artikel': {
-      id: '/artikel'
-      path: '/artikel'
-      fullPath: '/artikel'
-      preLoaderRoute: typeof clientArtikelLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/(client)/informationall': {
       id: '/informationall'
       path: '/informationall'
@@ -445,6 +484,41 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof clientIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(client)/artikel/': {
+      id: '/artikel/'
+      path: '/artikel'
+      fullPath: '/artikel'
+      preLoaderRoute: typeof clientArtikelIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(client)/buku/': {
+      id: '/buku/'
+      path: '/buku'
+      fullPath: '/buku'
+      preLoaderRoute: typeof clientBukuIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(client)/artikel/$id/artikel': {
+      id: '/artikel/$id/artikel'
+      path: '/artikel/$id/artikel'
+      fullPath: '/artikel/$id/artikel'
+      preLoaderRoute: typeof clientArtikelIdArtikelLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(client)/artikel/$id/instagram': {
+      id: '/artikel/$id/instagram'
+      path: '/artikel/$id/instagram'
+      fullPath: '/artikel/$id/instagram'
+      preLoaderRoute: typeof clientArtikelIdInstagramLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(client)/buku/$id/buku': {
+      id: '/buku/$id/buku'
+      path: '/buku/$id/buku'
+      fullPath: '/buku/$id/buku'
+      preLoaderRoute: typeof clientBukuIdBukuLazyImport
       parentRoute: typeof rootRoute
     }
     '/(server)/(data-admin)/data-admin/create': {
@@ -531,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof serverdataBukuDataBukuIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/(server)/(data-himpunan)/data-himpunan/': {
+      id: '/data-himpunan/'
+      path: '/data-himpunan'
+      fullPath: '/data-himpunan'
+      preLoaderRoute: typeof serverdataHimpunanDataHimpunanIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/(server)/(data-pengurus)/data-pengurus/': {
       id: '/data-pengurus/'
       path: '/data-pengurus'
@@ -601,12 +682,15 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   authLoginLazyRoute,
-  clientAboutLazyRoute,
-  clientArtikelLazyRoute,
   clientInformationallLazyRoute,
   serverDashboardLazyRoute,
   serverProfileLazyRoute,
   clientIndexLazyRoute,
+  clientArtikelIndexLazyRoute,
+  clientBukuIndexLazyRoute,
+  clientArtikelIdArtikelLazyRoute,
+  clientArtikelIdInstagramLazyRoute,
+  clientBukuIdBukuLazyRoute,
   serverdataAdminDataAdminCreateLazyRoute,
   serverdataAlumniDataAlumniCreateLazyRoute,
   serverdataArtikelDataArtikelCreateLazyRoute,
@@ -619,6 +703,7 @@ export const routeTree = rootRoute.addChildren({
   serverdataArtikelDataArtikelIndexLazyRoute,
   serverdataBarangDataBarangIndexLazyRoute,
   serverdataBukuDataBukuIndexLazyRoute,
+  serverdataHimpunanDataHimpunanIndexLazyRoute,
   serverdataPengurusDataPengurusIndexLazyRoute,
   serverdataYoutubeDataYoutubeIndexLazyRoute,
   serverdataAdminDataAdminIdEditLazyRoute,
@@ -639,12 +724,15 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/login",
-        "/about",
-        "/artikel",
         "/informationall",
         "/dashboard",
         "/profile",
         "/",
+        "/artikel/",
+        "/buku/",
+        "/artikel/$id/artikel",
+        "/artikel/$id/instagram",
+        "/buku/$id/buku",
         "/data-admin/create",
         "/data-alumni/create",
         "/data-artikel/create",
@@ -657,6 +745,7 @@ export const routeTree = rootRoute.addChildren({
         "/data-artikel/",
         "/data-barang/",
         "/data-buku/",
+        "/data-himpunan/",
         "/data-pengurus/",
         "/data-youtube/",
         "/data-admin/$id/edit",
@@ -671,12 +760,6 @@ export const routeTree = rootRoute.addChildren({
     "/login": {
       "filePath": "(auth)/login.lazy.tsx"
     },
-    "/about": {
-      "filePath": "(client)/about.lazy.tsx"
-    },
-    "/artikel": {
-      "filePath": "(client)/artikel.lazy.tsx"
-    },
     "/informationall": {
       "filePath": "(client)/informationall.lazy.tsx"
     },
@@ -688,6 +771,21 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "(client)/index.lazy.tsx"
+    },
+    "/artikel/": {
+      "filePath": "(client)/artikel.index.lazy.tsx"
+    },
+    "/buku/": {
+      "filePath": "(client)/buku.index.lazy.tsx"
+    },
+    "/artikel/$id/artikel": {
+      "filePath": "(client)/artikel_.$id.artikel.lazy.tsx"
+    },
+    "/artikel/$id/instagram": {
+      "filePath": "(client)/artikel_.$id.instagram.lazy.tsx"
+    },
+    "/buku/$id/buku": {
+      "filePath": "(client)/buku_.$id.buku.lazy.tsx"
     },
     "/data-admin/create": {
       "filePath": "(server)/(data-admin)/data-admin.create.lazy.tsx"
@@ -724,6 +822,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/data-buku/": {
       "filePath": "(server)/(data-buku)/data-buku.index.lazy.tsx"
+    },
+    "/data-himpunan/": {
+      "filePath": "(server)/(data-himpunan)/data-himpunan.index.lazy.tsx"
     },
     "/data-pengurus/": {
       "filePath": "(server)/(data-pengurus)/data-pengurus.index.lazy.tsx"

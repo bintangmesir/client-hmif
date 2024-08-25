@@ -3,20 +3,28 @@ import { DataPengurusType } from "@/features/data-pengurus/schema";
 import { PostOrPatchResponseType } from "@/utils/type";
 import { getCookie } from "react-use-cookie";
 
-export async function getPengurus() {
+export async function getPengurus(offset: number) {
   const accessToken = getCookie("accessToken");
   const controller = new AbortController();
 
-  const response = await fetch(`${VITE_APP_URI_SERVER}/v1/pengurus`, {
-    method: "GET",
-    signal: controller.signal,
-    mode: "cors",
-    credentials: "include",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const response = await fetch(
+    `${VITE_APP_URI_SERVER}/v1/pengurus?offset=${offset}`,
+    {
+      method: "GET",
+      signal: controller.signal,
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     },
-  });
-  return (await response.json()) as { data: DataPengurusType[] };
+  );
+  return (await response.json()) as {
+    data: DataPengurusType[];
+    count: number;
+    offset: number;
+    limit: number;
+  };
 }
 
 export async function getPengurusById(id: string) {

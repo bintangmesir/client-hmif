@@ -1,5 +1,6 @@
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/data/file";
 import { z } from "zod";
+import { DataAdminType } from "../data-admin/schema";
 
 export enum ArtikelContentTipeEnum {
   subTitle = "sub_title",
@@ -38,6 +39,130 @@ export type DataArtikelType = {
   view: number;
   createdAt: number;
   updatedAt: number;
+
+  admins: DataAdminType[];
+  artikelContents: (
+    | {
+        id: string;
+        index: number;
+        tipe: "sub_title";
+        subTipe:
+          | "default"
+          | "javascript"
+          | "typescript"
+          | "html"
+          | "css"
+          | "python"
+          | "java"
+          | "cpp"
+          | "csharp"
+          | "ruby"
+          | "php"
+          | "go"
+          | "json"
+          | "scss"
+          | "perl"
+          | "r"
+          | "lua";
+        content: string;
+      }
+    | {
+        id: string;
+        index: number;
+        tipe: "description";
+        subTipe:
+          | "default"
+          | "javascript"
+          | "typescript"
+          | "html"
+          | "css"
+          | "python"
+          | "java"
+          | "cpp"
+          | "csharp"
+          | "ruby"
+          | "php"
+          | "go"
+          | "json"
+          | "scss"
+          | "perl"
+          | "r"
+          | "lua";
+        content: string;
+      }
+    | {
+        id: string;
+        index: number;
+        tipe: "blockquote";
+        subTipe:
+          | "default"
+          | "javascript"
+          | "typescript"
+          | "html"
+          | "css"
+          | "python"
+          | "java"
+          | "cpp"
+          | "csharp"
+          | "ruby"
+          | "php"
+          | "go"
+          | "json"
+          | "scss"
+          | "perl"
+          | "r"
+          | "lua";
+        content: string;
+      }
+    | {
+        id: string;
+        index: number;
+        tipe: "code";
+        subTipe:
+          | "default"
+          | "javascript"
+          | "typescript"
+          | "html"
+          | "css"
+          | "python"
+          | "java"
+          | "cpp"
+          | "csharp"
+          | "ruby"
+          | "php"
+          | "go"
+          | "json"
+          | "scss"
+          | "perl"
+          | "r"
+          | "lua";
+        content: string;
+      }
+    | {
+        id: string;
+        index: number;
+        tipe: "image";
+        subTipe:
+          | "default"
+          | "javascript"
+          | "typescript"
+          | "html"
+          | "css"
+          | "python"
+          | "java"
+          | "cpp"
+          | "csharp"
+          | "ruby"
+          | "php"
+          | "go"
+          | "json"
+          | "scss"
+          | "perl"
+          | "r"
+          | "lua";
+        content: FileList | null;
+      }
+  )[];
 };
 
 export type DataArtikelContentType = {
@@ -124,32 +249,45 @@ export const DataArtikelContentCreateFormSchema = z.discriminatedUnion("tipe", [
     }),
     subTipe: artikelContentSubTipe,
     content: z
-      .custom<FileList>()
-      .nullable()
-      .refine((files) => !files || files.length > 0, {
-        message: "Photo upload is required",
-      })
-      .refine((files) => !files || files.length <= 10, {
-        message: "A maximum of 10 photos can be uploaded",
-      })
+      .union([
+        z.string().nullable(), // Allow string type for thumbnail
+        z.instanceof(FileList, { message: "Thumbnail harus berupa file." }),
+      ])
       .refine(
-        (files) =>
-          !files ||
-          (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-            Array.from(files).every((file) =>
-              ACCEPTED_IMAGE_TYPES.includes(file.type),
-            )),
+        (value) => {
+          if (typeof value === "string") {
+            // If thumbnail is a string, skip validation
+            return true;
+          }
+          if (value instanceof FileList) {
+            // If thumbnail is a FileList, perform validation
+            return value.length <= 10;
+          }
+          return false;
+        },
         {
-          message: "Maximum file size is 1MB.",
+          message:
+            "Photo upload is required and a maximum of 10 photo can be uploaded.",
         },
       )
       .refine(
-        (files) =>
-          !files ||
-          Array.from(files).every((file) =>
-            ACCEPTED_IMAGE_TYPES.includes(file.type),
-          ),
-        "Only .jpg, .jpeg, and .png files are allowed",
+        (value) => {
+          if (typeof value === "string") {
+            return true;
+          }
+          if (value instanceof FileList) {
+            return Array.from(value).every(
+              (file) =>
+                file.size <= MAX_FILE_SIZE &&
+                ACCEPTED_IMAGE_TYPES.includes(file.type),
+            );
+          }
+          return false;
+        },
+        {
+          message:
+            "Maximum file size is 1MB and only .jpg, .jpeg, and .png files are allowed.",
+        },
       ),
   }),
 ]);
@@ -161,34 +299,26 @@ export const DataArtikelCreateSchema = z.object({
     .max(255, { message: "Judul tidak boleh lebih dari 255 karakter." }),
   subTitle: z
     .string()
+    .min(1, { message: "Sub judul harus diisi." })
     .max(255, { message: "Subjudul tidak boleh lebih dari 255 karakter." }),
   thumbnail: z
-    .custom<FileList>()
-    .nullable()
-    .refine((files) => !files || files.length > 0, {
-      message: "Photo upload is required",
+    .instanceof(FileList, {
+      message: "Thumbnail harus berupa file.",
     })
-    .refine((files) => !files || files.length <= 1, {
-      message: "A maximum of 1 photos can be uploaded",
+    .refine((files) => files.length <= 1, {
+      message: "A maximum of 1 photo can be uploaded",
     })
     .refine(
       (files) =>
-        !files ||
-        (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-          Array.from(files).every((file) =>
+        Array.from(files).every(
+          (file) =>
+            file.size <= MAX_FILE_SIZE &&
             ACCEPTED_IMAGE_TYPES.includes(file.type),
-          )),
-      {
-        message: "Maximum file size is 1MB.",
-      },
-    )
-    .refine(
-      (files) =>
-        !files ||
-        Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type),
         ),
-      "Only .jpg, .jpeg, and .png files are allowed",
+      {
+        message:
+          "File size must be less than 1MB and file type must be jpg, jpeg, or png.",
+      },
     ),
   commentEnabled: z.enum(["true", "false"], {
     errorMap: (issue) => {
@@ -212,32 +342,45 @@ export const DataArtikelUpdateSchema = z.object({
     .string()
     .max(255, { message: "Subjudul tidak boleh lebih dari 255 karakter." }),
   thumbnail: z
-    .custom<FileList>()
-    .nullable()
-    .refine((files) => !files || files.length > 0, {
-      message: "Photo upload is required",
-    })
-    .refine((files) => !files || files.length <= 1, {
-      message: "A maximum of 1 photos can be uploaded",
-    })
+    .union([
+      z.string().nullable(), // Allow string type for thumbnail
+      z.instanceof(FileList, { message: "Thumbnail harus berupa file." }),
+    ])
     .refine(
-      (files) =>
-        !files ||
-        (Array.from(files).every((file) => file.size <= MAX_FILE_SIZE) &&
-          Array.from(files).every((file) =>
-            ACCEPTED_IMAGE_TYPES.includes(file.type),
-          )),
+      (value) => {
+        if (typeof value === "string") {
+          // If thumbnail is a string, skip validation
+          return true;
+        }
+        if (value instanceof FileList) {
+          // If thumbnail is a FileList, perform validation
+          return value.length <= 1;
+        }
+        return false;
+      },
       {
-        message: "Maximum file size is 1MB.",
+        message:
+          "Photo upload is required and a maximum of 1 photo can be uploaded.",
       },
     )
     .refine(
-      (files) =>
-        !files ||
-        Array.from(files).every((file) =>
-          ACCEPTED_IMAGE_TYPES.includes(file.type),
-        ),
-      "Only .jpg, .jpeg, and .png files are allowed",
+      (value) => {
+        if (typeof value === "string") {
+          return true;
+        }
+        if (value instanceof FileList) {
+          return Array.from(value).every(
+            (file) =>
+              file.size <= MAX_FILE_SIZE &&
+              ACCEPTED_IMAGE_TYPES.includes(file.type),
+          );
+        }
+        return false;
+      },
+      {
+        message:
+          "Maximum file size is 1MB and only .jpg, .jpeg, and .png files are allowed.",
+      },
     ),
   commentEnabled: z.enum(["true", "false"], {
     errorMap: (issue) => {
@@ -249,4 +392,5 @@ export const DataArtikelUpdateSchema = z.object({
       return { message: "Comment enabled tidak valid." };
     },
   }),
+  artikelContent: z.array(DataArtikelContentCreateFormSchema),
 });

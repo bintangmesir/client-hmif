@@ -7,6 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
 import { useMutation } from "react-query";
 import { patchResetPassword } from "@/services/admin";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type DataAdminResetPasswordType = UseFormReturn<
   z.infer<typeof DataAdminResetPasswordSchema>
@@ -15,14 +16,22 @@ export type DataAdminResetPasswordType = UseFormReturn<
 const useResetPasswordDataAdmin = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
+  const { setFlashMessage } = useFlashMessageContext();
   const { id }: { id: string } = useParams({ strict: false });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchResetPasswordMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: patchResetPasswordMutation } = useMutation({
     mutationKey: ["patchResetPassword", { id: id }],
     mutationFn: (formData: FormData) => patchResetPassword(id, formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-admin" });
+      }
+    },
   });
   const form: DataAdminResetPasswordType = useForm<
     z.infer<typeof DataAdminResetPasswordSchema>
@@ -43,12 +52,6 @@ const useResetPasswordDataAdmin = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-admin" });
   };
   return { form, isLoading, onSubmit };
 };

@@ -1,6 +1,5 @@
-import { deleteYoutube, getYoutube } from "@/services/youtube";
+import { deleteYoutube } from "@/services/youtube";
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "react-query";
 import { DataYoutubeType } from "../schema";
 import {
   DataTable,
@@ -26,6 +25,8 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
+import useGetDataYoutube from "../_hooks/useGetDataYoutube";
+import { AdminRoleEnum, useAuthUserContext } from "@/context/auth-provider";
 
 export const SkeletonTableYoutube = () => {
   return (
@@ -61,10 +62,9 @@ export const SkeletonTableYoutube = () => {
 };
 
 export const CardDataYoutube = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["dataYoutube"],
-    queryFn: getYoutube,
-  });
+  const admin = useAuthUserContext();
+  const role = admin?.data.role;
+  const { data, firstIsLoading, firstIsError } = useGetDataYoutube();
 
   const columns: ColumnDef<DataYoutubeType>[] = [
     {
@@ -88,30 +88,23 @@ export const CardDataYoutube = () => {
         const id = row.getValue("id");
         const judul = row.getValue("judul");
 
-        return (
+        return role === AdminRoleEnum.staff_kominfo ? (
           <ActionButton
             id={id as string}
             rowDataWarning={judul as string}
             deleteData={() => deleteYoutube(id as string)}
           />
-        );
+        ) : null;
       },
     },
   ];
 
-  if (isError) {
+  if (firstIsError) {
     return (
       <Card className="w-full border-2 border-primary">
-        <CardHeader className="flex w-full flex-row items-center justify-between gap-2">
-          <div className="flex flex-col gap-2">
-            <CardTitle>Data Youtube</CardTitle>
-            <CardDescription>Table for show data youtube</CardDescription>
-          </div>
-          <Link to={"/data-youtube/create"}>
-            <Button>
-              <Plus className="mr-1" /> Tambah Data
-            </Button>
-          </Link>
+        <CardHeader>
+          <CardTitle>Data Youtube</CardTitle>
+          <CardDescription>Table for show data youtube</CardDescription>
         </CardHeader>
         <CardContent>Oops! Something Wrong...</CardContent>
       </Card>
@@ -125,17 +118,19 @@ export const CardDataYoutube = () => {
           <CardTitle>Data Youtube</CardTitle>
           <CardDescription>Table for show data youtube</CardDescription>
         </div>
-        <Link to={"/data-youtube/create"}>
-          <Button>
-            <Plus className="mr-1" /> Tambah Data
-          </Button>
-        </Link>
+        {role === AdminRoleEnum.staff_kominfo ? (
+          <Link to={"/data-youtube/create"}>
+            <Button>
+              <Plus className="mr-1" /> Tambah Data
+            </Button>
+          </Link>
+        ) : null}
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {firstIsLoading ? (
           <SkeletonTableYoutube />
         ) : (
-          <DataTable columns={columns} data={data ? data.data : []} />
+          <DataTable columns={columns} data={data ? data : []} />
         )}
       </CardContent>
     </Card>

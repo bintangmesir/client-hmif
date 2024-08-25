@@ -1,19 +1,13 @@
-import CardUpdateDataBuku from "@/features/data-buku/_components/CardUpdateDataBuku";
+import UpdateDataBuku from "@/features/data-buku/_pages/UpdateDataBuku";
 import AdminLayout from "@/layouts/AdminLayout";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute(
   "/(server)/(data-buku)/data-buku/$id/edit",
 )({
-  component: () => UpdateDataBuku(),
-});
-
-function UpdateDataBuku() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardUpdateDataBuku />
-      </div>
+      <UpdateDataBuku />
     </AdminLayout>
-  );
-}
+  ),
+});

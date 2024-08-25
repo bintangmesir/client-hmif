@@ -4,21 +4,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdatePasswordSchema } from "../schema";
 import { patchUpdatePassword } from "@/services/profile";
 import { useMutation } from "react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type UpdatePasswordType = UseFormReturn<
   z.infer<typeof UpdatePasswordSchema>
 >;
 
 const useUpdatePassword = () => {
-  const navigate = useNavigate({ from: "/profile" });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchUpdatePasswordMutation,
-  } = useMutation({
+  const { setFlashMessage } = useFlashMessageContext();
+  const { isLoading, mutateAsync: patchUpdatePasswordMutation } = useMutation({
     mutationKey: ["updatePassword"],
     mutationFn: patchUpdatePassword,
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        setFlashMessage({
+          title: "SUCCESS",
+          description: item.message,
+          status: item.status,
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    },
   });
 
   const form: UpdatePasswordType = useForm<
@@ -43,12 +55,6 @@ const useUpdatePassword = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: "/profile" });
-    }
-
-    navigate({ to: "/profile" });
   };
 
   return { form, isLoading, onSubmit };

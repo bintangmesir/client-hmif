@@ -1,17 +1,11 @@
-import { CardDataBuku } from "@/features/data-buku/_components/CardDataBuku";
+import IndexDataBuku from "@/features/data-buku/_pages/IndexDataBuku";
 import AdminLayout from "@/layouts/AdminLayout";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/(server)/(data-buku)/data-buku/")({
-  component: () => IndexDataBuku(),
-});
-
-function IndexDataBuku() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardDataBuku />
-      </div>
+      <IndexDataBuku />
     </AdminLayout>
-  );
-}
+  ),
+});

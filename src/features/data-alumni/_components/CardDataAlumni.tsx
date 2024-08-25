@@ -1,6 +1,5 @@
-import { deleteAlumni, getAlumni } from "@/services/alumni";
+import { deleteAlumni } from "@/services/alumni";
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "react-query";
 import { DataAlumniType } from "../schema";
 import {
   DataTable,
@@ -26,6 +25,8 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
+import useGetDataAlumni from "../_hooks/useGetDataAlumni";
+import { AdminRoleEnum, useAuthUserContext } from "@/context/auth-provider";
 
 export const SkeletonTableAlumni = () => {
   return (
@@ -61,10 +62,9 @@ export const SkeletonTableAlumni = () => {
 };
 
 export const CardDataAlumni = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["dataAlumni"],
-    queryFn: getAlumni,
-  });
+  const admin = useAuthUserContext();
+  const role = admin?.data.role;
+  const { data, firstIsLoading, firstIsError } = useGetDataAlumni();
 
   const columns: ColumnDef<DataAlumniType>[] = [
     {
@@ -94,30 +94,23 @@ export const CardDataAlumni = () => {
         const id = row.getValue("id");
         const nama = row.getValue("nama");
 
-        return (
+        return role === AdminRoleEnum.staff_prhp ? (
           <ActionButton
             id={id as string}
             rowDataWarning={nama as string}
             deleteData={() => deleteAlumni(id as string)}
           />
-        );
+        ) : null;
       },
     },
   ];
 
-  if (isError) {
+  if (firstIsError) {
     return (
       <Card className="w-full border-2 border-primary">
-        <CardHeader className="flex w-full flex-row items-center justify-between gap-2">
-          <div className="flex flex-col gap-2">
-            <CardTitle>Data Alumni</CardTitle>
-            <CardDescription>Table for show data alumni</CardDescription>
-          </div>
-          <Link to={"/data-alumni/create"}>
-            <Button>
-              <Plus className="mr-1" /> Tambah Data
-            </Button>
-          </Link>
+        <CardHeader>
+          <CardTitle>Data Alumni</CardTitle>
+          <CardDescription>Table for show data alumni</CardDescription>
         </CardHeader>
         <CardContent>Oops! Something Wrong...</CardContent>
       </Card>
@@ -131,17 +124,19 @@ export const CardDataAlumni = () => {
           <CardTitle>Data Alumni</CardTitle>
           <CardDescription>Table for show data alumni</CardDescription>
         </div>
-        <Link to={"/data-alumni/create"}>
-          <Button>
-            <Plus className="mr-1" /> Tambah Data
-          </Button>
-        </Link>
+        {role === AdminRoleEnum.staff_prhp ? (
+          <Link to={"/data-alumni/create"}>
+            <Button>
+              <Plus className="mr-1" /> Tambah Data
+            </Button>
+          </Link>
+        ) : null}
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {firstIsLoading ? (
           <SkeletonTableAlumni />
         ) : (
-          <DataTable columns={columns} data={data ? data.data : []} />
+          <DataTable columns={columns} data={data ? data : []} />
         )}
       </CardContent>
     </Card>

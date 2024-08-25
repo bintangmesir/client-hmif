@@ -17,7 +17,7 @@ import FormSelect from "@/components/costum/FormSelect";
 
 const CardUpdateDataPengurus = () => {
   useCsrfToken();
-  const { form, isLoading, onSubmit, foto, id } = useUpdateDataPengurus();
+  const { form, isLoading, onSubmit, id } = useUpdateDataPengurus();
 
   return (
     <Form {...form}>
@@ -72,7 +72,6 @@ const CardUpdateDataPengurus = () => {
             <FormFile
               form={form.control}
               name={"foto"}
-              imgDatas={foto}
               imgPath={`${import.meta.env.VITE_APP_FILE_SERVER}/pengurus/${id}`}
             />
           </CardContent>

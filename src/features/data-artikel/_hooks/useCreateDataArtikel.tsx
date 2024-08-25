@@ -7,32 +7,47 @@ import {
   DataArtikelCreateSchema,
 } from "../schema";
 import { useMutation } from "react-query";
-import { postArtikel } from "@/services/artikel";
+import { postArtikel, postArtikelContent } from "@/services/artikel";
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type CreateDataArtikelType = UseFormReturn<
   z.infer<typeof DataArtikelCreateSchema>
 >;
 
 const useCreateDataArtikel = () => {
-  const [id, setId] = useState<null | string>(null);
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
-  const {
-    data,
-    isError,
-    isLoading,
-    mutateAsync: postArtikelMutation,
-  } = useMutation({
+  const { setFlashMessage } = useFlashMessageContext();
+  const { mutateAsync: postArtikelMutation } = useMutation({
     mutationKey: ["postArtikel"],
     mutationFn: (formData: FormData) => postArtikel(formData),
-    onSuccess: () => {
-      if (data) {
-        setId(data?.id);
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
       }
     },
   });
+
+  const { isLoading, mutateAsync: postArtikelContentMutation } = useMutation({
+    mutationKey: ["postArtikelContent"],
+    mutationFn: ({ props }: { props: { id: string; formData: FormData } }) =>
+      postArtikelContent({ props }),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      }
+    },
+  });
+
   const form: CreateDataArtikelType = useForm<
     z.infer<typeof DataArtikelCreateSchema>
   >({
@@ -41,7 +56,6 @@ const useCreateDataArtikel = () => {
       title: "",
       subTitle: "",
       commentEnabled: "true",
-      thumbnail: null,
       artikelContent: [
         {
           tipe: ArtikelContentTipeEnum.description,
@@ -61,38 +75,62 @@ const useCreateDataArtikel = () => {
         formData.append("thumbnail", values.thumbnail[i]);
       }
     }
-    for (let i = 0; i < values.artikelContent.length; i++) {
-      const contentItem = values.artikelContent[i];
-      const newData = { ...contentItem, index: i };
-      formData.append("artikelContent", JSON.stringify(newData));
 
-      // Handle image type
-      if (contentItem.tipe === "image") {
-        if (contentItem.content && contentItem.content instanceof FileList) {
-          for (let j = 0; j < contentItem.content.length; j++) {
-            const file = contentItem.content[j];
-            if (file) {
-              formData.append("artikelContentImage", file);
+    try {
+      const response = await postArtikelMutation(formData);
+      for (let i = 0; i < values.artikelContent.length; i++) {
+        const formDataArtikelContent = new FormData();
+        formDataArtikelContent.append("index", i.toString());
+        formDataArtikelContent.append("tipe", values.artikelContent[i].tipe);
+        formDataArtikelContent.append(
+          "subTipe",
+          values.artikelContent[i].subTipe,
+        );
+
+        if (values.artikelContent[i].tipe !== "image") {
+          if (values.artikelContent[i].content) {
+            formDataArtikelContent.append(
+              "content",
+              values.artikelContent[i].content as string,
+            );
+          }
+        } else {
+          if (values.artikelContent[i].content as FileList) {
+            // Ensure content is a FileList
+            if (values.artikelContent[i].content instanceof FileList) {
+              for (
+                let j = 0;
+                j < (values.artikelContent[i].content as FileList).length;
+                j++
+              ) {
+                formDataArtikelContent.append(
+                  "content",
+                  (values.artikelContent[i] as { content: FileList }).content[
+                    j
+                  ],
+                );
+              }
+            } else {
+              console.error("Content is not a FileList.");
             }
           }
-        } else if (contentItem.content !== null) {
-          console.error("Expected content to be FileList for image type.");
+        }
+
+        try {
+          await postArtikelContentMutation({
+            props: { id: response.id, formData: formDataArtikelContent },
+          });
+        } catch (e) {
+          console.error(e);
         }
       }
-    }
-    try {
-      await postArtikelMutation(formData);
     } catch (e) {
       console.error(e);
     }
 
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
     navigate({ to: "/data-artikel" });
   };
-  return { form, isLoading, onSubmit, id };
+  return { form, isLoading, onSubmit };
 };
 
 export default useCreateDataArtikel;

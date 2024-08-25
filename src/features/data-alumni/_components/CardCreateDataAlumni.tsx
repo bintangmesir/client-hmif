@@ -37,7 +37,7 @@ const CardCreateDataAlumni = () => {
             <FormInput
               form={form.control}
               name={"angkatan"}
-              inputProps={{ placeholder: "2000", type: "text" }}
+              inputProps={{ placeholder: "2000", type: "number" }}
             />
             <FormInput
               form={form.control}

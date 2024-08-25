@@ -17,7 +17,7 @@ import FormFile from "@/components/costum/FormFile";
 
 const CardUpdateDataBuku = () => {
   useCsrfToken();
-  const { form, isLoading, onSubmit, cover, id } = useUpdateDataBuku();
+  const { form, isLoading, onSubmit, id } = useUpdateDataBuku();
 
   return (
     <Form {...form}>
@@ -54,12 +54,12 @@ const CardUpdateDataBuku = () => {
             <FormInput
               form={form.control}
               name={"tahunTerbit"}
-              inputProps={{ placeholder: "1999", type: "text" }}
+              inputProps={{ placeholder: "1999", type: "number" }}
             />
             <FormInput
               form={form.control}
               name={"jumlah"}
-              inputProps={{ placeholder: "Jumlah buku", type: "text" }}
+              inputProps={{ placeholder: "Jumlah buku", type: "number" }}
             />
             <FormTextarea
               form={form.control}
@@ -69,7 +69,6 @@ const CardUpdateDataBuku = () => {
             <FormFile
               form={form.control}
               name={"cover"}
-              imgDatas={cover}
               imgPath={`${import.meta.env.VITE_APP_FILE_SERVER}/buku/${id}`}
             />
           </CardContent>

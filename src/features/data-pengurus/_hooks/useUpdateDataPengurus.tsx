@@ -2,11 +2,10 @@ import { z } from "zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DataPengurusUpdateSchema } from "../schema";
-import { useEffect, useState } from "react";
-import { splitStringToArray } from "@/utils/stringToArray";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "react-query";
 import { getPengurusById, patchPengurus } from "@/services/pengurus";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type DataPengurusUpdateType = UseFormReturn<
   z.infer<typeof DataPengurusUpdateSchema>
@@ -15,30 +14,27 @@ export type DataPengurusUpdateType = UseFormReturn<
 const useUpdateDataPengurus = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
+  const { setFlashMessage } = useFlashMessageContext();
   const { id }: { id: string } = useParams({ strict: false });
   const { data } = useQuery({
     queryKey: ["dataPengurusById", { id: id }],
     queryFn: async () => getPengurusById(id),
   });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchPengurusMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: patchPengurusMutation } = useMutation({
     mutationKey: ["patchPengurus"],
     mutationFn: (formData: FormData) => patchPengurus(id, formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-pengurus" });
+      }
+    },
   });
-  const [foto, setFoto] = useState<string[]>();
-
-  useEffect(() => {
-    if (data) {
-      const formatted = data.data.foto
-        ? splitStringToArray(data.data.foto)
-        : [];
-      setFoto(formatted);
-    }
-  }, [data]);
-
   const form: DataPengurusUpdateType = useForm<
     z.infer<typeof DataPengurusUpdateSchema>
   >({
@@ -54,7 +50,7 @@ const useUpdateDataPengurus = () => {
           name: data.data.name,
           departemen: data.data.departemen,
           jabatan: data.data.jabatan,
-          foto: null,
+          foto: data.data.foto as unknown as FileList,
         }
       : undefined,
   });
@@ -75,14 +71,8 @@ const useUpdateDataPengurus = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-pengurus" });
   };
-  return { form, isLoading, onSubmit, foto, id };
+  return { form, isLoading, onSubmit, id };
 };
 
 export default useUpdateDataPengurus;

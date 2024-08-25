@@ -5,6 +5,7 @@ import { DataYoutubeSchema } from "../schema";
 import { useMutation } from "react-query";
 import { postYoutube } from "@/services/youtube";
 import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type CreateDataYoutubeType = UseFormReturn<
   z.infer<typeof DataYoutubeSchema>
@@ -13,13 +14,21 @@ export type CreateDataYoutubeType = UseFormReturn<
 const useCreateDataYoutube = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: postYoutubeMutation,
-  } = useMutation({
+  const { setFlashMessage } = useFlashMessageContext();
+  const { isLoading, mutateAsync: postYoutubeMutation } = useMutation({
     mutationKey: ["postYoutube"],
     mutationFn: (formData: FormData) => postYoutube(formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-youtube" });
+      }
+    },
   });
   const form: CreateDataYoutubeType = useForm<
     z.infer<typeof DataYoutubeSchema>
@@ -40,12 +49,6 @@ const useCreateDataYoutube = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-youtube" });
   };
   return { form, isLoading, onSubmit };
 };

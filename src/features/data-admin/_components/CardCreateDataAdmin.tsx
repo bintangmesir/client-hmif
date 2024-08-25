@@ -14,7 +14,7 @@ import useCreateDataAdmin from "../_hooks/useCreateDataAdmin";
 import FormSelect from "@/components/costum/FormSelect";
 import FormFile from "@/components/costum/FormFile";
 import useCsrfToken from "@/hooks/useCsrfToken";
-import { AdminRoleEnum } from "@/hooks/useCheckRole";
+import { AdminRoleEnum } from "@/context/auth-provider";
 import { useAuthUserContext } from "@/context/auth-provider";
 
 const CardCreateDataAdmin = () => {

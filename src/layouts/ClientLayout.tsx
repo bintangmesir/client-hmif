@@ -19,16 +19,17 @@ import {
   Globe,
   House,
   Newspaper,
-  UsersRound,
   Github,
   Instagram,
   Linkedin,
   Mail,
   Twitter,
   Youtube,
+  Book,
 } from "lucide-react";
 import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 
 export const Navbar = () => {
   const menus = [
@@ -43,9 +44,9 @@ export const Navbar = () => {
       icon: <Newspaper className="h-[1.2rem] w-[1.2rem]" />,
     },
     {
-      path: "/about",
-      name: "About",
-      icon: <UsersRound className="h-[1.2rem] w-[1.2rem]" />,
+      path: "/buku",
+      name: "Buku",
+      icon: <Book className="h-[1.2rem] w-[1.2rem]" />,
     },
     {
       path: "/informationall",
@@ -131,48 +132,67 @@ export const Navbar = () => {
 };
 
 export const Footer = () => {
-  const data = [
+  const features = [
     {
-      title: "hmif.org",
-      icon: <Globe size={20} strokeWidth={1.5} />,
-      path: "https://hmif.org",
+      Icon: Instagram,
+      name: "hmif_ftumj",
+      description: "Instagram HMIF BEM FT-UMJ",
+      href: "https://www.instagram.com/hmif_ftumj",
+      cta: "Visit Account",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-2",
     },
     {
-      title: "hmif@ftumj.ac.id",
-      icon: <Mail size={20} strokeWidth={1.5} />,
-      path: "mailto:hmif@ftumj.ac.id",
+      Icon: Mail,
+      name: "hmif@ftumj.ac.id",
+      description: "Email HMIF BEM FT-UMJ",
+      href: "mailto:hmif@ftumj.ac.id",
+      cta: "Visit Account",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:row-start-3 lg:row-end-4 lg:col-start-2 lg:col-end-2",
     },
     {
-      title: "hmif_ftumj",
-      icon: <Instagram size={20} strokeWidth={1.5} />,
-      path: "https://www.instagram.com/hmif_ftumj",
+      Icon: Twitter,
+      name: "@hmif_ftumj",
+      description: "Twitter HMIF BEM FT-UMJ",
+      href: "https://twitter.com/hmif_ftumj",
+      cta: "Visit Account",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-1 lg:col-end-1 lg:row-start-2 lg:row-end-1",
     },
     {
-      title: "@hmif_ftumj",
-      icon: <Twitter size={20} strokeWidth={1.5} />,
-      path: "https://twitter.com/hmif_ftumj",
+      Icon: Github,
+      name: "hmif_ftumj",
+      description: "Github HMIF BEM FT-UMJ",
+      href: "https://github.com/hmifft-umj",
+      cta: "Visit Account",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-1 lg:col-end-1 lg:row-start-2 lg:row-end-4",
     },
     {
-      title: "hmif_ftumj",
-      icon: <Github size={20} strokeWidth={1.5} />,
-      path: "https://github.com/hmifft-umj",
+      Icon: Youtube,
+      name: "HMIF BEM FT-UMJ",
+      description: "Youtube HMIF BEM FT-UMJ",
+      href: "https://www.youtube.com/channel/UCeDkRG4BrbKME3N5rG3xyYQ",
+      cta: "Visit Account",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
     },
     {
-      title: "HMIF BEM FT-UMJ",
-      icon: <Youtube size={20} strokeWidth={1.5} />,
-      path: "https://www.youtube.com/channel/UCeDkRG4BrbKME3N5rG3xyYQ",
-    },
-    {
-      title: "HMIF BEM FT-UMJ",
-      icon: <Linkedin size={20} strokeWidth={1.5} />,
-      path: "https://id.linkedin.com/in/hmifbemftumj",
+      Icon: Linkedin,
+      name: "HMIF BEM FT-UMJ",
+      description: "Linkedin HMIF BEM FT-UMJ",
+      href: "https://id.linkedin.com/in/hmifbemftumj",
+      cta: "Visit Account",
+      background: <img className="absolute -right-20 -top-20 opacity-60" />,
+      className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
     },
   ];
 
   return (
     <>
       <footer className="container mt-auto">
-        <div className="grid grid-cols-1 gap-8 overflow-hidden lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-center justify-center gap-8 overflow-hidden lg:grid-cols-2">
           <div className="flex flex-col gap-4">
             <TypographyH2 className="border-none">Lokasi :</TypographyH2>
             <iframe
@@ -190,20 +210,11 @@ export const Footer = () => {
             </TypographyP>
           </div>
           <div className="flex w-full flex-col justify-start gap-4">
-            <TypographyH2 className="border-none">Social Media :</TypographyH2>
-            {data.map((item, id) => (
-              <a
-                key={id}
-                href={item.path}
-                className="flex w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-card bg-primary py-3 text-center text-primary-foreground hover:border-primary hover:bg-card hover:text-primary"
-                target="_blank"
-              >
-                <TypographyP className="flex items-center justify-center gap-2">
-                  {item.icon}
-                  {item.title}
-                </TypographyP>
-              </a>
-            ))}
+            <BentoGrid className="lg:grid-rows-3">
+              {features.map((feature, id) => (
+                <BentoCard key={id} {...feature} />
+              ))}
+            </BentoGrid>
           </div>
         </div>
       </footer>

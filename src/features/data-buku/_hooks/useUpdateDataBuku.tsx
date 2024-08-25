@@ -2,11 +2,10 @@ import { z } from "zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DataBukuUpdateSchema } from "../schema";
-import { useEffect, useState } from "react";
-import { splitStringToArray } from "@/utils/stringToArray";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "react-query";
 import { getBukuById, patchBuku } from "@/services/buku";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type DataBukuUpdateType = UseFormReturn<
   z.infer<typeof DataBukuUpdateSchema>
@@ -15,29 +14,27 @@ export type DataBukuUpdateType = UseFormReturn<
 const useUpdateDataBuku = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
+  const { setFlashMessage } = useFlashMessageContext();
   const { id }: { id: string } = useParams({ strict: false });
   const { data } = useQuery({
     queryKey: ["dataBukuById", { id: id }],
     queryFn: async () => getBukuById(id),
   });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchBukuMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: patchBukuMutation } = useMutation({
     mutationKey: ["patchBuku"],
     mutationFn: (formData: FormData) => patchBuku(id, formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-buku" });
+      }
+    },
   });
-  const [cover, setCover] = useState<string[]>();
-
-  useEffect(() => {
-    if (data) {
-      const formatted = data.data.cover
-        ? splitStringToArray(data.data.cover)
-        : [];
-      setCover(formatted);
-    }
-  }, [data]);
 
   const form: DataBukuUpdateType = useForm<
     z.infer<typeof DataBukuUpdateSchema>
@@ -49,7 +46,7 @@ const useUpdateDataBuku = () => {
       kode: "",
       penerbit: "",
       penulis: "",
-      tahunTerbit: "",
+      tahunTerbit: 0,
       jumlah: 0,
       cover: null,
     },
@@ -60,9 +57,9 @@ const useUpdateDataBuku = () => {
           kode: data.data.kode,
           penerbit: data.data.penerbit,
           penulis: data.data.penulis,
-          tahunTerbit: data.data.tahunTerbit,
+          tahunTerbit: +data.data.tahunTerbit,
           jumlah: data.data.jumlah,
-          cover: null,
+          cover: data.data.cover as unknown as FileList,
         }
       : undefined,
   });
@@ -74,7 +71,7 @@ const useUpdateDataBuku = () => {
     formData.append("kode", values.kode);
     formData.append("penerbit", values.penerbit);
     formData.append("penulis", values.penulis);
-    formData.append("tahunTerbit", values.tahunTerbit);
+    formData.append("tahunTerbit", values.tahunTerbit.toString());
     formData.append("jumlah", values.jumlah.toString());
     if (values.cover) {
       for (let i = 0; i < values.cover.length; i++) {
@@ -87,14 +84,8 @@ const useUpdateDataBuku = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-buku" });
   };
-  return { form, isLoading, onSubmit, cover, id };
+  return { form, isLoading, onSubmit, id };
 };
 
 export default useUpdateDataBuku;

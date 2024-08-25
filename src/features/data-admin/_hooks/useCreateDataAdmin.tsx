@@ -5,6 +5,7 @@ import { DataAdminCreateSchema } from "../schema";
 import { useMutation } from "react-query";
 import { postAdmin } from "@/services/admin";
 import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type DataAdminCreateType = UseFormReturn<
   z.infer<typeof DataAdminCreateSchema>
@@ -12,14 +13,22 @@ export type DataAdminCreateType = UseFormReturn<
 
 const useCreateDataAdmin = () => {
   const location = useLocation();
+  const { setFlashMessage } = useFlashMessageContext();
   const navigate = useNavigate({ from: location.pathname });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: postAdminMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: postAdminMutation } = useMutation({
     mutationKey: ["postAdmin"],
     mutationFn: (formData: FormData) => postAdmin(formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-admin" });
+      }
+    },
   });
   const form: DataAdminCreateType = useForm<
     z.infer<typeof DataAdminCreateSchema>
@@ -31,9 +40,9 @@ const useCreateDataAdmin = () => {
       password: "",
       confirmPassword: "",
       role: undefined,
-      fotoProfile: null,
     },
   });
+
   const onSubmit = async (values: z.infer<typeof DataAdminCreateSchema>) => {
     const formData = new FormData();
     formData.append("name", values.name);
@@ -45,17 +54,12 @@ const useCreateDataAdmin = () => {
         formData.append("fotoProfile", values.fotoProfile[i]);
       }
     }
+
     try {
       await postAdminMutation(formData);
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-admin" });
   };
   return { form, isLoading, onSubmit };
 };

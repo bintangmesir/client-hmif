@@ -31,15 +31,13 @@ const ActionButton = ({
   useCsrfToken();
   const router = useLocation();
   const navigate = useNavigate({ from: router.pathname });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: deleteDataMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: deleteDataMutation } = useMutation({
     mutationKey: ["deleteData"],
     mutationFn: deleteData,
+    onSuccess: () => {
+      navigate({ to: "/dashboard" });
+    },
   });
-
   return (
     <Dialog>
       <DropdownMenu>
@@ -79,11 +77,6 @@ const ActionButton = ({
                 } catch (e) {
                   console.error(e);
                 }
-
-                if (isError) {
-                  navigate({ to: router.pathname });
-                }
-                navigate({ to: "/dashboard" });
               }}
             >
               Delete <Trash className="ml-2" size={16} />

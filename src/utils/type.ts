@@ -1,4 +1,4 @@
-import { AdminRoleEnum } from "@/hooks/useCheckRole";
+import { AdminRoleEnum } from "@/context/auth-provider";
 
 export type GetResponseType<T> = {
   status: "success" | "error";
@@ -14,7 +14,7 @@ export type GetByIdResponseType<T> = {
 
 export type PostOrPatchResponseType = {
   status: "success" | "error";
-  message: string;
+  message: string | string[];
 };
 
 export type AccessTokenType = {

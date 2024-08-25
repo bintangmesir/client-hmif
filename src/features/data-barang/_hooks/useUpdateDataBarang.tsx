@@ -5,6 +5,7 @@ import { DataBarangSchema } from "../schema";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "react-query";
 import { getBarangById, patchBarang } from "@/services/barang";
+import { useFlashMessageContext } from "@/context/flash-message-provider";
 
 export type UpdateDataBarangType = UseFormReturn<
   z.infer<typeof DataBarangSchema>
@@ -13,18 +14,26 @@ export type UpdateDataBarangType = UseFormReturn<
 const useUpdateDataBarang = () => {
   const location = useLocation();
   const navigate = useNavigate({ from: location.pathname });
+  const { setFlashMessage } = useFlashMessageContext();
   const { id }: { id: string } = useParams({ strict: false });
   const { data } = useQuery({
     queryKey: ["dataBarangById", { id: id }],
     queryFn: async () => getBarangById(id),
   });
-  const {
-    isError,
-    isLoading,
-    mutateAsync: patchBarangMutation,
-  } = useMutation({
+  const { isLoading, mutateAsync: patchBarangMutation } = useMutation({
     mutationKey: ["patchBarang"],
     mutationFn: (formData: FormData) => patchBarang(id, formData),
+    onSuccess: (item) => {
+      if (item.status === "error") {
+        setFlashMessage({
+          title: "ERROR",
+          description: item.message,
+          status: item.status,
+        });
+      } else {
+        navigate({ to: "/data-barang" });
+      }
+    },
   });
 
   const form: UpdateDataBarangType = useForm<z.infer<typeof DataBarangSchema>>({
@@ -63,12 +72,6 @@ const useUpdateDataBarang = () => {
     } catch (e) {
       console.error(e);
     }
-
-    if (isError) {
-      navigate({ to: location.pathname });
-    }
-
-    navigate({ to: "/data-barang" });
   };
   return { form, isLoading, onSubmit, id };
 };

@@ -38,7 +38,7 @@ const CardCreateDataYoutube = () => {
               form={form.control}
               name={"link"}
               inputProps={{
-                placeholder: "http://youtube.com/...",
+                placeholder: "http://youtube.com/embed/...",
                 type: "text",
               }}
             />

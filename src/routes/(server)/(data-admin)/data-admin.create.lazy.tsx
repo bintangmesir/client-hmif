@@ -1,19 +1,13 @@
-import CardCreateDataAdmin from "@/features/data-admin/_components/CardCreateDataAdmin";
+import CreateDataAdmin from "@/features/data-admin/_pages/CreateDataAdmin";
 import AdminLayout from "@/layouts/AdminLayout";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute(
   "/(server)/(data-admin)/data-admin/create",
 )({
-  component: () => CreateDataAdmin(),
-});
-
-function CreateDataAdmin() {
-  return (
+  component: () => (
     <AdminLayout>
-      <div className="container flex items-center justify-center">
-        <CardCreateDataAdmin />
-      </div>
+      <CreateDataAdmin />
     </AdminLayout>
-  );
-}
+  ),
+});

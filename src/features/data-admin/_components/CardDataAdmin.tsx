@@ -1,6 +1,5 @@
-import { deleteAdmin, getAdmin } from "@/services/admin";
+import { deleteAdmin } from "@/services/admin";
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "react-query";
 import { DataAdminType } from "../schema";
 import {
   DataTable,
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
+import useGetDataAdmin from "../_hooks/useGetDataAdmin";
 
 export const SkeletonTableAdmin = () => {
   return (
@@ -66,11 +66,7 @@ export const SkeletonTableAdmin = () => {
 export const CardDataAdmin = () => {
   const admin = useAuthUserContext();
   const role = admin?.data.role;
-  const userId = admin?.data.id;
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["dataAdmin"],
-    queryFn: getAdmin,
-  });
+  const { data, firstIsLoading, firstIsError } = useGetDataAdmin();
 
   const columns: ColumnDef<DataAdminType>[] = [
     {
@@ -143,17 +139,9 @@ export const CardDataAdmin = () => {
         const roleRow = row.getValue("role");
         const name = row.getValue("name");
 
-        if (role && role === roleRow && userId && userId === id) {
-          return (
-            <ActionButton
-              id={id as string}
-              rowDataWarning={name as string}
-              deleteData={() => deleteAdmin(id as string)}
-            />
-          );
-        } else if (
-          (role && role === "super_admin" && roleRow === "kadep_kominfo") ||
-          roleRow === "kadep_prhp"
+        if (
+          role === "super_admin" &&
+          (roleRow === "kadep_kominfo" || roleRow === "kadep_prhp")
         ) {
           return (
             <ActionButton
@@ -162,11 +150,7 @@ export const CardDataAdmin = () => {
               deleteData={() => deleteAdmin(id as string)}
             />
           );
-        } else if (
-          role &&
-          role === "kadep_kominfo" &&
-          roleRow === "staff_kominfo"
-        ) {
+        } else if (role === "kadep_kominfo" && roleRow === "staff_kominfo") {
           return (
             <ActionButton
               id={id as string}
@@ -174,7 +158,7 @@ export const CardDataAdmin = () => {
               deleteData={() => deleteAdmin(id as string)}
             />
           );
-        } else if (role && role === "kadep_prhp" && roleRow === "staff_prhp") {
+        } else if (role === "kadep_prhp" && roleRow === "staff_prhp") {
           return (
             <ActionButton
               id={id as string}
@@ -189,7 +173,7 @@ export const CardDataAdmin = () => {
     },
   ];
 
-  if (isError) {
+  if (firstIsError) {
     return (
       <Card className="w-full border-2 border-primary">
         <CardHeader className="flex w-full flex-row items-center justify-between gap-2">
@@ -222,10 +206,10 @@ export const CardDataAdmin = () => {
         </Link>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {firstIsLoading ? (
           <SkeletonTableAdmin />
         ) : (
-          <DataTable columns={columns} data={data ? data.data : []} />
+          <DataTable columns={columns} data={data ? data : []} />
         )}
       </CardContent>
     </Card>
