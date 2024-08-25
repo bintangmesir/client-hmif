@@ -1,17 +1,10 @@
-import { useTheme } from "@/context/theme-provider";
-import { useEffect, useState } from "react";
 import { TypographyH1 } from "@/components/costum/Typhography";
+import GridPattern from "@/components/magicui/grid-pattern";
 import data from "@/data/himpunan.json";
-import Particles from "@/components/magicui/particles";
+import { cn } from "@/lib/utils";
 
 const SectionTugasPokokHimpunan = () => {
   const tugasPokok = data;
-  const { theme } = useTheme();
-  const [color, setColor] = useState("#ffffff");
-
-  useEffect(() => {
-    setColor(theme === "dark" ? "#ffffff" : "#000000");
-  }, [theme]);
   return (
     <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
       {tugasPokok.tugasPokok.map((item, id) => (
@@ -22,12 +15,25 @@ const SectionTugasPokokHimpunan = () => {
           <TypographyH1>{item}</TypographyH1>
         </div>
       ))}
-      <Particles
-        className="absolute inset-0"
-        quantity={500}
-        ease={50}
-        color={color}
-        refresh
+      <GridPattern
+        squares={[
+          [4, 4],
+          [5, 1],
+          [8, 2],
+          [5, 3],
+          [5, 5],
+          [10, 10],
+          [12, 15],
+          [15, 10],
+          [10, 15],
+          [15, 10],
+          [10, 15],
+          [15, 10],
+        ]}
+        className={cn(
+          "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+        )}
       />
     </div>
   );
