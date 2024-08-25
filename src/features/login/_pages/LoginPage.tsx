@@ -1,4 +1,3 @@
-import React from "react";
 import CardAuth from "../_components/CardAuth";
 
 const LoginPage = () => {
