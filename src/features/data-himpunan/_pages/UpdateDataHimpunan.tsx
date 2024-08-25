@@ -5,7 +5,7 @@ import CardUpdateDataHimpunan from "../_components/CardUpdateDataHimpunan";
 const UpdateDataHimpunan = () => {
   const { checkRole, isAllowed } = useCheckRole();
   useEffect(() => {
-    checkRole([AdminRoleEnum.staff_kominfo, AdminRoleEnum.staff_kominfo]);
+    checkRole([AdminRoleEnum.kadep_kominfo, AdminRoleEnum.staff_kominfo]);
   }, []);
   return (
     isAllowed && (
