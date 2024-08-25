@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import data from "@/data/himpunan.json";
 
-const SectionVisiMisiHimpunana = () => {
+const SectionVisiMisiHimpunan = () => {
   const visiMisi = data;
 
   return (
@@ -45,4 +45,4 @@ const SectionVisiMisiHimpunana = () => {
   );
 };
 
-export default SectionVisiMisiHimpunana;
+export default SectionVisiMisiHimpunan;

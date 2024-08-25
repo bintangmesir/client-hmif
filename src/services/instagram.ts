@@ -16,7 +16,6 @@ export async function getInstagram(url?: string | undefined) {
     signal: controller.signal,
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
     },
   });
   return (await response.json()) as {
@@ -41,7 +40,6 @@ export async function getInstagramById(id: string) {
       signal: controller.signal,
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
       },
     },
   );
