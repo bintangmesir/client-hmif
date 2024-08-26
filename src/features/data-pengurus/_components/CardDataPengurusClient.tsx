@@ -27,7 +27,7 @@ const SectionImagePengurus = ({ data }: { data: DataPengurusType[] }) => {
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [, setCount] = useState(0);
 
   useEffect(() => {
     if (!api) {
@@ -84,7 +84,7 @@ const SectionImagePengurus = ({ data }: { data: DataPengurusType[] }) => {
       </CarouselContent>
       {data.length > 1 ? (
         <div className="w-full text-center">
-          Slide {current} of {count}
+          Slide {current} of {data.length}
         </div>
       ) : null}
       {data.length > 1 ? (
