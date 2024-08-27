@@ -1,7 +1,6 @@
 import useGetDataPengurus from "../_hooks/useGetDataPengurus";
 import { TypographyH3 } from "@/components/costum/Typhography";
 import { VITE_APP_FILE_SERVER } from "@/data/env";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { DataPengurusType } from "../schema";
 import {
   Card,
@@ -22,6 +21,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { stringTransformToWhiteSpace } from "@/utils/stringTransformToWhiteSpace";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const SectionImagePengurus = ({ data }: { data: DataPengurusType[] }) => {
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
@@ -63,7 +64,7 @@ const SectionImagePengurus = ({ data }: { data: DataPengurusType[] }) => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <AspectRatio ratio={1 / 1} className="flex justify-center">
+                  <Zoom>
                     <img
                       src={
                         item.foto
@@ -72,7 +73,7 @@ const SectionImagePengurus = ({ data }: { data: DataPengurusType[] }) => {
                       }
                       alt={item.name}
                     />
-                  </AspectRatio>
+                  </Zoom>
                 </CardContent>
                 <CardFooter className="flex w-full items-center justify-center">
                   <TypographyH3>{item.name}</TypographyH3>
