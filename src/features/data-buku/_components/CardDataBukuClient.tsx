@@ -52,16 +52,10 @@ const CardDataBukuClient = () => {
             >
               <Card className="w-full border-2 border-primary">
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between gap-4">
+                  <CardTitle className="line-clamp-2 min-h-12">
                     {content.judul}
                   </CardTitle>
-                  <CardDescription>
-                    <span className="flex w-full items-center justify-between">
-                      <span>Kode Buku : {content.kode}</span>
-                      <span>Tahun terbit : {content?.tahunTerbit}</span>
-                    </span>
-                    Penulis : {content.penulis}
-                  </CardDescription>
+                  <CardDescription>Kode Buku : {content.kode}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex w-full flex-col items-center justify-center gap-4">
                   <AspectRatio ratio={3 / 4} className="flex justify-center">
@@ -74,6 +68,11 @@ const CardDataBukuClient = () => {
                       alt={content.judul}
                     />
                   </AspectRatio>
+                  <div className="flex w-full items-center justify-between gap-2">
+                    Tahun terbit : {content?.tahunTerbit}
+                    <br />
+                    Penulis : {content.penulis}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
