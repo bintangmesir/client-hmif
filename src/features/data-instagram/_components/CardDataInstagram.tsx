@@ -12,8 +12,6 @@ import {
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Link } from "@tanstack/react-router";
 import { TypographyH3 } from "@/components/costum/Typhography";
-import Zoom from "react-medium-image-zoom";
-import "react-medium-image-zoom/dist/styles.css";
 
 const CardDataInstagram = () => {
   const {
@@ -67,20 +65,13 @@ const CardDataInstagram = () => {
                 <CardContent>
                   <AspectRatio ratio={1 / 1} className="flex">
                     {content?.media_type === "VIDEO" ? (
-                      <Zoom>
-                        <img
-                          src={content?.thumbnail_url}
-                          alt={content?.thumbnail_url}
-                          className="h-auto w-full"
-                        />
-                      </Zoom>
+                      <img
+                        src={content?.thumbnail_url}
+                        alt={content?.thumbnail_url}
+                        className="h-auto w-full"
+                      />
                     ) : (
-                      <Zoom>
-                        <img
-                          src={content?.media_url}
-                          alt={content?.media_url}
-                        />
-                      </Zoom>
+                      <img src={content?.media_url} alt={content?.media_url} />
                     )}
                   </AspectRatio>
                 </CardContent>
