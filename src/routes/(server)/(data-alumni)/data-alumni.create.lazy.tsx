@@ -1,4 +1,4 @@
-import CreateDataAlumni from "@/features/data-artikel/_pages/CreateDataArtikel";
+import CreateDataAlumni from "@/features/data-alumni/_pages/CreateDataAlumni";
 import AdminLayout from "@/layouts/AdminLayout";
 import { createLazyFileRoute } from "@tanstack/react-router";
 

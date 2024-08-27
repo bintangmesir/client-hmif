@@ -13,6 +13,8 @@ import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import useGetDataByIdInstagram from "../_hooks/useGetByIdDataInstagram";
 import { TypographyH3, TypographyP } from "@/components/costum/Typhography";
 import { Badge } from "@/components/ui/badge";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const VideoContent = ({ props }: { props: InstagramDataType }) => {
   return (
@@ -26,14 +28,18 @@ const VideoContent = ({ props }: { props: InstagramDataType }) => {
 };
 
 const ImageContent = ({ props }: { props: InstagramDataType }) => {
-  return <img src={props?.media_url} alt={props?.media_url} />;
+  return (
+    <Zoom>
+      <img src={props?.media_url} alt={props?.media_url} />
+    </Zoom>
+  );
 };
 
 const CarouselImageContent = ({ props }: { props: InstagramDataType }) => {
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [, setCount] = useState(0);
 
   useEffect(() => {
     if (!api) {
@@ -58,23 +64,27 @@ const CarouselImageContent = ({ props }: { props: InstagramDataType }) => {
       <CarouselContent>
         {props.children.data?.map((item, id) => (
           <CarouselItem key={id}>
-            <div className="p-1">
-              {item?.media_type === "VIDEO" ? (
+            {item?.media_type === "VIDEO" ? (
+              <div className="p-1">
                 <iframe
                   title={item?.id}
                   src={item?.media_url}
                   allowFullScreen
                 />
-              ) : (
-                <img src={item?.media_url} alt={item?.media_url} />
-              )}
-            </div>
+              </div>
+            ) : (
+              <Zoom>
+                <div className="p-1">
+                  <img src={item?.media_url} alt={item?.media_url} />
+                </div>
+              </Zoom>
+            )}
           </CarouselItem>
         ))}
       </CarouselContent>
       {props.children.data.length > 1 ? (
         <div className="w-full text-center">
-          Slide {current} of {count}
+          Slide {current} of {props.children.data.length}
         </div>
       ) : null}
       {props.children.data.length > 1 ? (

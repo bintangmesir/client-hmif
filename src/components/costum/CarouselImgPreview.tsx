@@ -8,6 +8,8 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 export type CaraouselImgPreviewType = {
   props: { path?: string; data: string[] };
@@ -23,7 +25,7 @@ const CaraouselImgPreview = ({
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [, setCount] = useState(0);
 
   useEffect(() => {
     if (!api) {
@@ -48,19 +50,21 @@ const CaraouselImgPreview = ({
       <CarouselContent>
         {props.data.map((item, index) => (
           <CarouselItem key={index}>
-            <div className="p-1">
-              <img
-                src={props.path ? `${props.path}/${item}` : item}
-                alt={`${item}`}
-                className={className}
-              />
-            </div>
+            <Zoom>
+              <div className="p-1">
+                <img
+                  src={props.path ? `${props.path}/${item}` : item}
+                  alt={`${item}`}
+                  className={className}
+                />
+              </div>
+            </Zoom>
           </CarouselItem>
         ))}
       </CarouselContent>
       {slideEnable && props.data.length > 1 ? (
         <div className="w-full text-center">
-          Slide {current} of {count}
+          Slide {current} of {props.data.length}
         </div>
       ) : null}
       {props.data.length > 1 ? (

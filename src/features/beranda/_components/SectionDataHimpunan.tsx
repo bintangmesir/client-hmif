@@ -4,6 +4,8 @@ import { splitStringToArray } from "@/utils/stringToArray";
 import NumberTicker from "@/components/magicui/number-ticker";
 import { VITE_APP_FILE_SERVER } from "@/data/env";
 import { TypographyH1, TypographyList } from "@/components/costum/Typhography";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const SectionDataHimpunan = () => {
   const { data } = useQuery({
@@ -48,11 +50,13 @@ const SectionDataHimpunan = () => {
           data.data.galeriMahasiswa &&
           splitStringToArray(data.data.galeriMahasiswa).map((item, id) => (
             <div key={id} className="flex w-full items-center justify-center">
-              <img
-                src={`${VITE_APP_FILE_SERVER}/himpunan/${data.data.id}/${item}`}
-                alt={item}
-                className="h-auto w-full"
-              />
+              <Zoom>
+                <img
+                  src={`${VITE_APP_FILE_SERVER}/himpunan/${data.data.id}/${item}`}
+                  alt={item}
+                  className="h-auto w-full"
+                />
+              </Zoom>
             </div>
           ))}
       </div>

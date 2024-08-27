@@ -15,6 +15,8 @@ import { EyeIcon, Loader } from "lucide-react";
 import { VITE_APP_FILE_SERVER } from "@/data/env";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatNumber } from "@/utils/formatNumber";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const CardDataArtikelClient = () => {
   const {
@@ -64,16 +66,18 @@ const CardDataArtikelClient = () => {
                   <CardDescription>{content.subTitle}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex w-full flex-col items-center justify-center gap-4">
-                  <AspectRatio ratio={1 / 1} className="flex justify-center">
-                    <img
-                      src={
-                        content.thumbnail
-                          ? `${VITE_APP_FILE_SERVER}/artikel/${content.id}/${content?.thumbnail}`
-                          : `https://ui-avatars.com/api/?name=${content.thumbnail}`
-                      }
-                      alt={content.thumbnail ?? ""}
-                    />
-                  </AspectRatio>
+                  <Zoom>
+                    <AspectRatio ratio={1 / 1} className="flex justify-center">
+                      <img
+                        src={
+                          content.thumbnail
+                            ? `${VITE_APP_FILE_SERVER}/artikel/${content.id}/${content?.thumbnail}`
+                            : `https://ui-avatars.com/api/?name=${content.thumbnail}`
+                        }
+                        alt={content.thumbnail ?? ""}
+                      />
+                    </AspectRatio>
+                  </Zoom>
                 </CardContent>
                 <CardFooter className="flex items-center justify-start gap-4">
                   <Avatar>

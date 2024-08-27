@@ -12,6 +12,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { VITE_APP_FILE_SERVER } from "@/data/env";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const CardDataBukuClient = () => {
   const {
@@ -64,16 +66,18 @@ const CardDataBukuClient = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex w-full flex-col items-center justify-center gap-4">
-                  <AspectRatio ratio={3 / 4} className="flex justify-center">
-                    <img
-                      src={
-                        content.cover
-                          ? `${VITE_APP_FILE_SERVER}/buku/${content.id}/${content?.cover}`
-                          : `https://ui-avatars.com/api/?name=${content.judul}`
-                      }
-                      alt={content.judul}
-                    />
-                  </AspectRatio>
+                  <Zoom>
+                    <AspectRatio ratio={3 / 4} className="flex justify-center">
+                      <img
+                        src={
+                          content.cover
+                            ? `${VITE_APP_FILE_SERVER}/buku/${content.id}/${content?.cover}`
+                            : `https://ui-avatars.com/api/?name=${content.judul}`
+                        }
+                        alt={content.judul}
+                      />
+                    </AspectRatio>
+                  </Zoom>
                 </CardContent>
               </Card>
             </Link>

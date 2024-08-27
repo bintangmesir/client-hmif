@@ -7,6 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import data from "@/data/himpunan.json";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const SectionLambangHimpunan = () => {
   const lambangHimpunan = data;
@@ -22,10 +24,12 @@ const SectionLambangHimpunan = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
-            <img
-              src="/images/LogoHMIF.png"
-              className="h-auto w-full max-w-xs"
-            />
+            <Zoom>
+              <img
+                src="/images/LogoHMIF.png"
+                className="h-auto w-full max-w-xs"
+              />
+            </Zoom>
           </CardContent>
         </Card>
       </div>
@@ -38,7 +42,9 @@ const SectionLambangHimpunan = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <img src="/images/LogoHMIF.png" className="h-auto w-full" />
+            <Zoom>
+              <img src="/images/LogoHMIF.png" className="h-auto w-full" />
+            </Zoom>
           </CardContent>
         </Card>
       </div>

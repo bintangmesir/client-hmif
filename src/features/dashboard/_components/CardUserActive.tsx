@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card";
 import { useAuthUserContext } from "@/context/auth-provider";
 import { VITE_APP_FILE_SERVER } from "@/data/env";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const CardUserActive = () => {
   const admin = useAuthUserContext();
@@ -21,15 +23,17 @@ const CardUserActive = () => {
           <CardDescription>Role : {admin?.data.role}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
-          <img
-            src={
-              admin?.data.fotoProfile
-                ? `${VITE_APP_FILE_SERVER}/admin/${admin?.data.id}/${admin?.data.fotoProfile}`
-                : `https://ui-avatars.com/api/?name=${admin?.data.name}`
-            }
-            className="h-auto w-full max-w-sm"
-            alt={admin?.data.name}
-          />
+          <Zoom>
+            <img
+              src={
+                admin?.data.fotoProfile
+                  ? `${VITE_APP_FILE_SERVER}/admin/${admin?.data.id}/${admin?.data.fotoProfile}`
+                  : `https://ui-avatars.com/api/?name=${admin?.data.name}`
+              }
+              className="h-auto w-full max-w-sm"
+              alt={admin?.data.name}
+            />
+          </Zoom>
         </CardContent>
         <CardFooter className="flex flex-col items-start justify-center gap-2">
           <TypographyP>Nama : {admin?.data.name}</TypographyP>

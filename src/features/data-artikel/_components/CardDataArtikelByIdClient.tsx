@@ -21,6 +21,8 @@ import { splitStringToArray } from "@/utils/stringToArray";
 import Editor from "@monaco-editor/react";
 import { formatNumber } from "@/utils/formatNumber";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const CardDataArtikelByIdClient = () => {
   const { data, isError, isLoading } = useGetDataByIdArtikel();
@@ -60,15 +62,17 @@ const CardDataArtikelByIdClient = () => {
           <CardHeader>
             <CardTitle>{data.data.title}</CardTitle>
             <CardDescription>{data.data.subTitle}</CardDescription>
-            <img
-              src={
-                data.data.thumbnail
-                  ? `${VITE_APP_FILE_SERVER}/artikel/${data.data.id}/${data.data?.thumbnail}`
-                  : `https://ui-avatars.com/api/?name=${data.data.thumbnail}`
-              }
-              className="pt-4"
-              alt={data.data.thumbnail ?? ""}
-            />
+            <Zoom>
+              <img
+                src={
+                  data.data.thumbnail
+                    ? `${VITE_APP_FILE_SERVER}/artikel/${data.data.id}/${data.data?.thumbnail}`
+                    : `https://ui-avatars.com/api/?name=${data.data.thumbnail}`
+                }
+                className="pt-4"
+                alt={data.data.thumbnail ?? ""}
+              />
+            </Zoom>
 
             <div className="flex items-center justify-start gap-4 pt-4">
               <Avatar>
