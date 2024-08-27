@@ -55,13 +55,12 @@ const CardDataArtikelClient = () => {
             >
               <Card className="w-full border-2 border-primary">
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between gap-4">
-                    {content.title}{" "}
-                    <span className="flex items-center justify-center gap-2">
-                      <EyeIcon /> {formatNumber(content.view)}
-                    </span>
+                  <CardTitle className="line-clamp-2 min-h-12">
+                    {content.title}
                   </CardTitle>
-                  <CardDescription>{content.subTitle}</CardDescription>
+                  <CardDescription className="line-clamp-2 min-h-10">
+                    {content.subTitle}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="flex w-full flex-col items-center justify-center gap-4">
                   <AspectRatio ratio={1 / 1} className="flex justify-center">
@@ -74,9 +73,14 @@ const CardDataArtikelClient = () => {
                       alt={content.thumbnail ?? ""}
                     />
                   </AspectRatio>
+                  <div className="flex w-full items-center justify-start">
+                    <span className="flex items-center justify-center gap-2">
+                      <EyeIcon /> {formatNumber(content.view)}
+                    </span>
+                  </div>
                 </CardContent>
-                <CardFooter className="flex items-center justify-start gap-4">
-                  <Avatar>
+                <CardFooter className="flex items-center justify-start gap-2">
+                  <Avatar className="h-10 w-10">
                     <AvatarImage
                       src={
                         content.admins[0].fotoProfile
@@ -87,11 +91,10 @@ const CardDataArtikelClient = () => {
                     />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col items-start justify-center">
-                    <TypographyP>
-                      Creator : {content.admins[0].name}
+                  <div className="flex w-full flex-col items-start justify-center p-1">
+                    <TypographyP className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {content.admins[0].name}
                     </TypographyP>
-                    <TypographyP>Email : {content.admins[0].email}</TypographyP>
                   </div>
                 </CardFooter>
               </Card>
