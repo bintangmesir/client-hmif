@@ -57,7 +57,7 @@ const CardDataArtikelByIdClient = () => {
   }
   return (
     data && (
-      <div className="flex w-full items-start justify-center">
+      <div className="container flex w-full items-start justify-center">
         <Card className="w-full max-w-3xl space-y-8 border-2 border-primary">
           <CardHeader>
             <CardTitle>{data.data.title}</CardTitle>
@@ -74,7 +74,7 @@ const CardDataArtikelByIdClient = () => {
               />
             </Zoom>
 
-            <div className="flex items-center justify-start gap-4 pt-4">
+            <div className="flex flex-col items-start justify-center gap-4 pt-4 sm:flex-row sm:items-center sm:justify-start">
               <Avatar>
                 <AvatarImage
                   src={
@@ -87,8 +87,8 @@ const CardDataArtikelByIdClient = () => {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start justify-center">
-                <TypographyP>Creator : {data.data.admins[0].name}</TypographyP>
-                <TypographyP>Email : {data.data.admins[0].email}</TypographyP>
+                <TypographyP>{data.data.admins[0].name}</TypographyP>
+                <TypographyP>{data.data.admins[0].email}</TypographyP>
               </div>
             </div>
             <div className="flex items-center justify-between gap-2 pt-2">
