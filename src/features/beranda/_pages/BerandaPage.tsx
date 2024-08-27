@@ -7,6 +7,7 @@ import SectionTugasPokokHimpunan from "../_components/SectionTugasPokokHimpunan"
 import SectionLambangHimpunan from "../_components/SectionLambangHimpunan";
 import SectionWeAreHmif from "../_components/SectionWeAreHmif";
 import SectionVisiMisiHimpunan from "../_components/SectionVisiMisiHimpunan";
+import CardDataArtikelClient from "@/features/data-artikel/_components/CardDataArtikelClient";
 
 const BerandaPage = () => {
   return (
@@ -39,7 +40,9 @@ const BerandaPage = () => {
       <SectionVisiMisiHimpunan />
       <Ribbon props={{ direction: "right", text: "WE ARE HMIF" }} />
       <SectionWeAreHmif />
-      <Ribbon props={{ direction: "left", text: "SOCIAL MEDIA" }} />
+      <Ribbon props={{ direction: "left", text: "ARTIKEL TERBARU" }} />
+      <CardDataArtikelClient />
+      <Ribbon props={{ direction: "right", text: "SOCIAL MEDIA" }} />
     </ClientLayout>
   );
 };
