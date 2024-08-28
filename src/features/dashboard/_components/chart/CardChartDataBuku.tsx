@@ -33,7 +33,7 @@ const CardChartDataBuku = () => {
 
   const chartProps: ChartComponentProps = {
     title: "Data buku",
-    description: "Total Data Artikel Berdasarkan Tahun Terbit",
+    description: "Total Data Buku Berdasarkan Tahun Terbit",
     data: chartData,
     config: chartConfig,
     dataKeyAxis: "year",
