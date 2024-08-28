@@ -26,7 +26,6 @@ const useGetDataArtikel = (limit?: number | undefined) => {
     mutationKey: ["getArtikelByOffset"],
     mutationFn: getArtikel,
     onSuccess: (item) => {
-      console.log(item.offset);
       setData((data) => [...data, ...item.data]);
       setOffset(item.offset);
     },
