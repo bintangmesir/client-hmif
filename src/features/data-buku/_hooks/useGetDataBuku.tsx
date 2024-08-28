@@ -26,7 +26,6 @@ const useGetDataBuku = (limit?: number | undefined) => {
     mutationKey: ["getBukuByOffset"],
     mutationFn: getBuku,
     onSuccess: (item) => {
-      console.log(item.offset);
       setData((data) => [...data, ...item.data]);
       setOffset(item.offset);
     },
