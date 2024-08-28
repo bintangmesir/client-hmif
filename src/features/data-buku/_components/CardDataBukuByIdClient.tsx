@@ -5,7 +5,6 @@ import {
   TypographyH3,
   TypographyP,
 } from "@/components/costum/Typhography";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { VITE_APP_FILE_SERVER } from "@/data/env";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
@@ -35,16 +34,14 @@ const CardDataBukuByIdClient = () => {
           <TypographyH2>{data.data.judul}</TypographyH2>
         </div>
         <Zoom>
-          <AspectRatio ratio={3 / 4} className="flex justify-center">
-            <img
-              src={
-                data.data.cover
-                  ? `${VITE_APP_FILE_SERVER}/buku/${data.data.id}/${data.data?.cover}`
-                  : `https://ui-avatars.com/api/?name=${data.data.judul}`
-              }
-              alt={data.data.judul}
-            />
-          </AspectRatio>
+          <img
+            src={
+              data.data.cover
+                ? `${VITE_APP_FILE_SERVER}/buku/${data.data.id}/${data.data?.cover}`
+                : `https://ui-avatars.com/api/?name=${data.data.judul}`
+            }
+            alt={data.data.judul}
+          />
         </Zoom>
         <div className="flex w-full flex-col items-start justify-center gap-2">
           <TypographyP>Penulis : {data.data.penulis}</TypographyP>
