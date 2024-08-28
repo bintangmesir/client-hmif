@@ -34,15 +34,17 @@ const CardDataBukuByIdClient = () => {
           <TypographyH2>{data.data.judul}</TypographyH2>
         </div>
         <Zoom>
-          <img
-            src={
-              data.data.cover
-                ? `${VITE_APP_FILE_SERVER}/buku/${data.data.id}/${data.data?.cover}`
-                : `https://ui-avatars.com/api/?name=${data.data.judul}`
-            }
-            alt={data.data.judul}
-            className="h-auto w-full"
-          />
+          <div className="flex w-full items-center justify-center">
+            <img
+              src={
+                data.data.cover
+                  ? `${VITE_APP_FILE_SERVER}/buku/${data.data.id}/${data.data?.cover}`
+                  : `https://ui-avatars.com/api/?name=${data.data.judul}`
+              }
+              alt={data.data.judul}
+              className="h-auto w-full"
+            />
+          </div>
         </Zoom>
         <div className="flex w-full flex-col items-start justify-center gap-2">
           <TypographyP>Penulis : {data.data.penulis}</TypographyP>
