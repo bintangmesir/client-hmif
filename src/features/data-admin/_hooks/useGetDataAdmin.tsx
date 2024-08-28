@@ -26,7 +26,6 @@ const useGetDataAdmin = () => {
     mutationKey: ["getAdminByOffset"],
     mutationFn: getAdmin,
     onSuccess: (item) => {
-      console.log(item.offset);
       setData((data) => [...data, ...item.data]);
       setOffset(item.offset);
     },
