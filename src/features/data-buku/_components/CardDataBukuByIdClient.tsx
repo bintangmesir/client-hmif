@@ -41,6 +41,7 @@ const CardDataBukuByIdClient = () => {
                 : `https://ui-avatars.com/api/?name=${data.data.judul}`
             }
             alt={data.data.judul}
+            className="h-auto w-full"
           />
         </Zoom>
         <div className="flex w-full flex-col items-start justify-center gap-2">
