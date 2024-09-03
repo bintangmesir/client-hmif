@@ -72,7 +72,7 @@ export const Navbar = () => {
                       className={
                         isActive
                           ? "flex items-center justify-center gap-2 text-primary"
-                          : "flex items-center justify-center gap-2 text-black hover:text-primary dark:text-white dark:hover:text-primary"
+                          : "flex items-center justify-center gap-2 text-gray-400 hover:text-primary"
                       }
                     >
                       {menu.icon} {menu.name}
