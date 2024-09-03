@@ -60,7 +60,9 @@ const SectionImagePengurus = ({ data }: { data: DataPengurusType[] }) => {
                     {stringTransformToWhiteSpace(item.jabatan)}
                   </CardTitle>
                   <CardDescription>
-                    {stringTransformToWhiteSpace(item.departemen)}
+                    {item.departemen !== "kahim_wakahim"
+                      ? stringTransformToWhiteSpace(item.departemen)
+                      : "Ketua dan Wakil Ketua Himpunan"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
