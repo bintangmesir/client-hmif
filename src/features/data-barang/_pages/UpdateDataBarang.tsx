@@ -5,7 +5,7 @@ import CardUpdateDataBarang from "../_components/CardUpdateDataBarang";
 const UpdateDataBarang = () => {
   const { checkRole, isAllowed } = useCheckRole();
   useEffect(() => {
-    checkRole([AdminRoleEnum.staff_kominfo]);
+    checkRole([AdminRoleEnum.staff_prhp]);
   }, []);
   return (
     isAllowed && (
