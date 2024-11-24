@@ -19,7 +19,6 @@ import { formatNumber } from "@/utils/formatNumber";
 const CardDataArtikelClient = () => {
   const {
     data,
-    offset,
     length,
     isLoading,
     firstIsError,
@@ -108,7 +107,7 @@ const CardDataArtikelClient = () => {
             <Button
               onClick={async () => {
                 try {
-                  await getArtikelMutation(offset);
+                  await getArtikelMutation();
                 } catch (e) {
                   console.error(e);
                 }
