@@ -24,17 +24,15 @@ const useGetDataBuku = (limit?: number | undefined) => {
     isError,
   } = useMutation({
     mutationKey: ["getBukuByOffset"],
-    mutationFn: getBuku,
+    mutationFn: () => getBuku(offset, limit),
     onSuccess: (item) => {
       setData((data) => [...data, ...item.data]);
       setOffset(item.offset);
-      setLength(item.limit);
     },
   });
 
   return {
     data,
-    offset,
     length,
     isLoading,
     isError,
