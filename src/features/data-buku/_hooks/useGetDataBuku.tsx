@@ -28,6 +28,7 @@ const useGetDataBuku = (limit?: number | undefined) => {
     onSuccess: (item) => {
       setData((data) => [...data, ...item.data]);
       setOffset(item.offset);
+      setLength(item.limit);
     },
   });
 
