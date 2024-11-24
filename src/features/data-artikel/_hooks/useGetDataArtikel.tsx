@@ -24,7 +24,7 @@ const useGetDataArtikel = (limit?: number | undefined) => {
     isError,
   } = useMutation({
     mutationKey: ["getArtikelByOffset"],
-    mutationFn: getArtikel,
+    mutationFn: async () => getArtikel(offset, limit),
     onSuccess: (item) => {
       setData((data) => [...data, ...item.data]);
       setOffset(item.offset);
