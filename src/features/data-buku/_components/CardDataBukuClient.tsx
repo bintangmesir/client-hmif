@@ -16,7 +16,6 @@ import { VITE_APP_FILE_SERVER } from "@/data/env";
 const CardDataBukuClient = () => {
   const {
     data,
-    offset,
     length,
     isLoading,
     firstIsError,
@@ -85,7 +84,7 @@ const CardDataBukuClient = () => {
             <Button
               onClick={async () => {
                 try {
-                  await getBukuMutation(offset);
+                  await getBukuMutation();
                 } catch (e) {
                   console.error(e);
                 }
